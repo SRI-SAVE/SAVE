@@ -1,0 +1,16 @@
+$demonstration {
+  'm4_am^0.1^PointWeaponInSafeDirection' "myM4";
+  'm4_am^0.1^SelectMode' "myM4", "Safe";
+  'm4_am^0.1^PullAndHoldChargingHandle' "myM4";
+  'm4_am^0.1^PushAndHoldBoltCatchBottom' "myM4";
+  'm4_am^0.1^ReleaseChargingHandle' "myM4";
+  'm4_am^0.1^LetGoOfBoltCatchBottom' "myM4";
+  'm4_am^0.1^PushChargingHandleForward' "myM4";
+  'm4_am^0.1^SelectMode' "myM4", "Safe";
+  'm4_am^0.1^PushBoltCatchTop' "myM4";
+  'm4_am^0.1^SelectMode' "myM4", "Semi";
+  'm4_am^0.1^PullTrigger' "myM4";
+  'm4_am^0.1^PullAndHoldChargingHandle' "myM4";
+  'm4_am^0.1^ReleaseChargingHandle' "myM4";
+  'm4_am^0.1^SelectMode' "myM4", "Safe";}
+ properties:{}

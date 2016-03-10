@@ -1,0 +1,67 @@
+<html>
+<!-- Copyright 2014, SRI International -->
+  <body>
+    <div id="content">    
+#if ($missing_atom_msgs.size() > 0)
+    <p>
+      <b>You forgot these steps:</b><br />
+      <ul>
+    #foreach ($msg in $missing_atom_msgs)
+        <li>$msg</li>
+    #end
+      </ul>
+    </p>
+#end
+
+#if ($value_equality_trace_msgs.size() > 0)
+    #set($start = 0)
+    #set($end = $value_equality_trace_msgs.size() - 1)
+    #set($range = [$start..$end])
+    
+    #foreach ($i in $range)
+    <p>
+    <table border="0">    
+      <tr><th align="right" valign="top" nowrap>You did:</th><td>$value_equality_trace_msgs[$i]</td></tr>
+        #foreach ($msg in $value_equality_error_msgs[$i])
+      <tr><th align="right" valign="top">but:</th><td>$msg</td></tr>
+        #end
+    </table>
+    </p>        
+    #end
+#end
+
+#if ($order_issue_msgs.size() > 0)
+    <p>
+    <b>You performed these steps in the wrong order:</b><br /><br />
+    #foreach ($msg_list in $order_issue_msgs)
+        #foreach ($msg in $msg_list)
+        &nbsp;&nbsp;&nbsp;&nbsp;$msg<br />
+        #end
+    #end
+    </p>
+#end
+
+#if ($state_issue_msgs.size() > 0)
+    <p>
+      <b>Overall Problems:</b>
+      <ul>
+    #foreach ($msg in $state_issue_msgs)
+        <li>$msg</li>
+    #end
+      </ul>
+    </p>
+#end
+
+#if ($extra_atom_msgs.size() > 0)
+    <p>
+      <b>You didn't need to:</b><br />
+      <ul>
+    #foreach ($msg in $extra_atom_msgs)
+        <li>$msg</li>
+    #end
+      </ul>
+    </p>
+#end
+    </div>
+  </body>
+</html>

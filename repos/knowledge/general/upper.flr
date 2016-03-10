@@ -1,0 +1,41 @@
+//
+// Copyright 2016 SRI International
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+// Placeholder upper ontology. Very meager at the moment.
+
+PhysicalObject [ description -> "A physical object"^^\string ]
+[|
+  hasDirectPart => PhysicalObject,
+  hasDirectRegion => PhysicalObject,
+  hasPart => PhysicalObject,  // the transitive closure of hasDirectPart
+  hasRegion => Region         // the transitive closure of hasPart + hasRegion
+|].
+
+Region [ description -> "A region, usually a part of a physical object, which depends on that object for its existence"^^\string ]
+[|
+  hasRegion => Region
+|].
+
+@!{HasPartRule}
+?x [ hasPart -> ?y ] :-
+  ?x [ hasDirectPart -> ?y ] ; ?x [ hasDirectPart -> ? [ hasPart -> ?y ] ].
+
+@!{HasRegionRule}
+?x [ hasRegion -> ?y ] :-
+  ?x [ hasDirectRegion -> ?y ] ; 
+  ?x [ hasDirectRegion -> ? [ hasRegion -> ?y ] ] ;
+  ?x [ hasPart -> ? [ hasRegion -> ?y ] ].
+

@@ -1,0 +1,2145 @@
+//
+// Copyright 2016 SRI International
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+loaded(m4).
+?- \unless loaded(mechanics) \do add{mechanics}.
+?- \unless loaded(util) \do add{util}.
+
+/*
+
+Model for the M4 Clearing The Weapon and Disassembly tasks.
+Each action is modeled as a rule, with preconditions, and effects modeled using transaction logic.
+
+- Daniel Elenius
+
+*/
+
+// Lots of booleans to capture the state of the weapon. These are not all independent.
+// The modeling approach is to capture the state at the level of the component that it is relevant to, as far down the
+// component hierarchy as possible. We model component down to the level that is relevant for the actions we're
+// interested in.
+
+M4 :: PhysicalObject [|
+  sling {0..1} => Sling,
+  upper {1..1} => UpperHalf,
+  lower {1..1} => LowerHalf
+|].
+
+Sling :: PhysicalObject [|
+  attachedFront {1..1} => \boolean,
+  attachedRear {1..1} => \boolean
+|].
+
+UpperHalf :: PhysicalObject [|
+  boltCarrierGroup {1..1} => BoltCarrierGroup,
+  carryHandle {0..1} => CarryHandle,
+  chamber {1..1} => Chamber,
+  //%roundChambered {1..1} => Round,
+  upperHandguard {1..1} => UpperHandGuard,
+  lowerHandguard {1..1} => LowerHandGuard,
+  slipRing {1..1} => SlipRing,
+  slingSwivel {1..1} => SlingSwivel,   // Could also be on the handguard. Here we assume it's on the gas block.
+  attachedFront {1..1} => \boolean,    // true if the upper is attached (but possibly with pin not in) in the front
+  attachedRear {1..1} => \boolean      // true if the upper is attached (but possibly with pin not in) in the rear
+|].
+
+SlingSwivel :: PhysicalObject [||].
+
+UpperHandGuard :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+LowerHandGuard :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+SlipRing :: PhysicalObject [|
+  pressedDown {1..1} => \boolean
+|].
+
+Chamber :: Region [||].
+
+@!{RoundChamberedRule}
+%roundChambered(?upper,?round) :-
+//?upper [ %roundChambered -> ?round ] :- 
+  ?upper [ chamber -> ?ch ],
+  ?round : Round [ location -> ?ch ].
+
+LowerHalf :: PhysicalObject [|
+  selector {1..1} => Selector,
+  magazine {0..1} => Magazine,
+  magazineReleaseButton {1..1} => MagazineReleaseButton,
+  hammer {1..1} => Hammer,
+  trigger {1..1} => Trigger,
+  pivotPin {1..1} => PivotPin,
+  takedownPin {1..1} => TakedownPin,
+  boltCatch {1..1} => BoltCatch, 
+  buttStock {1..1} => ButtStock,
+  lowerReceiverExtension {1..1} => LowerReceiverExtension,
+  bufferRetainer {1..1} => BufferRetainer
+|]. 
+ 
+MagazineReleaseButton :: PhysicalObject [|
+|].
+
+Trigger :: PhysicalObject [|
+  pulled {1..1} => \boolean
+|].
+
+Selector :: Switch [|
+  switchPosition {1..1} => SelectorMode
+|].
+
+BufferRetainer :: PhysicalObject [|
+  pressed {1..1} => \boolean
+|].
+
+BoltCatch :: PhysicalObject [|
+  boltCatchBottom {1..1} => BoltCatchBottom,
+  boltCatchTop {1..1} => BoltCatchTop,
+  engaged {1..1} => \boolean   // true if the bolt catch is set to catch the bolt assembly, i.e. the lower part either held in or already caught
+|].
+
+BoltCatchBottom :: Region [||].
+
+BoltCatchTop :: Region [||].
+
+Hammer :: PhysicalObject [|
+  cocked {1..1} => \boolean
+|].
+
+TakedownPin :: Pin [|
+  head {1..1} => TakedownPinHead,
+  tail {1..1} => TakedownPinTail,
+  pinState {1..1} => PinState
+|].
+
+TakedownPinHead :: Region [||].
+
+TakedownPinTail :: Region [||].
+
+PivotPin :: Pin [|
+  head {1..1} => PivotPinHead,
+  tail {1..1} => PivotPinTail,
+  pinState {1..1} => PinState
+|].
+
+PivotPinHead :: Region [||].
+
+PivotPinTail :: Region [||].
+
+PinState [||].
+
+PinIn : PinState [].
+PinPushed : PinState [].
+PinPulled : PinState [].
+
+LowerReceiverExtension :: PhysicalObject [|
+  attached {1..1} => \boolean,
+  buffer {1..1} => Buffer
+|].
+
+Buffer :: PhysicalObject [|
+  attached {1..1} => \boolean,
+  pushedBack {1..1} => \boolean
+|].
+
+ButtStock :: PhysicalObject [|
+  slingLoop {1..1} => SlingLoop,   
+  attached {1..1} => \boolean,
+  fullyOpen {1..1} => \boolean,
+  lockLever {1..1} => ButtStockLockLever
+|].
+
+SlingLoop :: PhysicalObject [||].
+
+ButtStockLockLever :: PhysicalObject [|
+  isOpen {1..1} => \boolean
+|].
+
+BoltCarrierGroup :: PhysicalObject [|
+  attached {1..1} => \boolean,     // true if the assembly is inside the upper
+  boltCarrierGroupState {1..1} => BoltCarrierGroupState, 
+  bolt {1..1} => Bolt,
+  chargingHandle {1..1} => ChargingHandle,
+  boltCam {1..1} => BoltCam,
+  firingPinRetainingPin {1..1} => FiringPinRetainingPin,
+  firingPin {1..1} => FiringPin
+|].
+
+BoltCarrierGroupState [||].
+BoltForward : BoltCarrierGroupState [].
+BoltLockedBack : BoltCarrierGroupState [].
+BoltHeldBack : BoltCarrierGroupState [].
+
+FiringPin :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+FiringPinRetainingPin :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+BoltCam :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+Bolt :: PhysicalObject [|
+  attached {1..1} => \boolean,  // true if the bolt is attached to the bolt carrier
+  extractorPin {1..1} => ExtractorPin,
+  extractor {1..1} => Extractor  // includes the extractor spring
+|].
+
+ExtractorPin :: Pin [|
+  attached {1..1} => \boolean
+|].
+
+Extractor :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+ChargingHandle :: PhysicalObject [|
+  attached {1..1} => \boolean,  // whether it's attached to the bolt assembly or not
+  position {1..1} => ChargingHandlePosition
+|].
+
+ChargingHandlePosition [||].
+ChargingHandleForward : ChargingHandlePosition [].
+ChargingHandleBack : ChargingHandlePosition [].
+
+Magazine :: PhysicalObject [|
+  attached {1..1} => \boolean,
+  //%roundCount {1..1} => \integer,     // number of rounds currently in the magazine
+  rounds {1..1} => \list             // an ordered list of rounds in the magazine, from top-most (first) to bottom-most (last)
+|].
+
+@!{RoundCountRule}
+//?mag [ %roundCount -> ?c ] :- 
+%roundCount(?mag,?c) :- 
+  ?mag : Magazine [ rounds -> ? [ length -> ?c ]@\basetype ].
+
+// Note that the location is somewhat redundant. A round in the magazine is going to appear in the rounds property of the magazine,
+// and also have that same magazine as the value of its location property. But we need the location property since it can also take
+// other values.
+Round :: PhysicalObject [|
+  location {1..1} => RoundLocation,
+  casing {1..1} => Casing
+|].
+
+Casing :: PhysicalObject [|
+  location {1..1} => RoundLocation  // actually, these will always be "Outside"
+|].
+
+Outside : RoundLocation.     // a special named location for anywhere outside the rifle
+Magazine :: RoundLocation.
+Chamber :: RoundLocation.
+
+CarryHandle :: PhysicalObject [|
+  attached {1..1} => \boolean,
+  frontScrew {1..1} => CarryHandleScrew,
+  rearScrew {1..1} => CarryHandleScrew
+|].
+
+CarryHandleScrew :: Screw [||].
+
+SelectorMode :: SwitchPosition [||].
+
+Safe : SelectorMode [].
+Semi : SelectorMode [].
+Burst : SelectorMode [].
+
+
+ShootingRange :: Region [|
+  target {1..*} => ShootingTarget
+|].
+
+// A "safe target" is anything that it is safe to point a gun towards.
+// It could be something like a hillside. It doesn't have to be something
+// that was designed to be a shooting target. 
+SafeTarget :: PhysicalEntity [||].
+
+// A target made for shooting at, typically found at a ShootingRange.
+ShootingTarget :: SafeTarget :: PhysicalObject [||].
+
+
+// --- Constructors ---
+
+@!{CreateShootingTargetRule}
+%create(ShootingTarget,?target) :-
+  %create_name(ShootingTarget,?target),
+  t_insert{
+    ?target : ShootingTarget
+  }.
+
+@!{CreateShootingRangeRule}
+%create(ShootingRange,?range) :-
+  %create(ShootingTarget,?target),
+  %create_name(ShootingRange,?range),
+  t_insert{
+    ?range : ShootingRange [
+      target -> ?target
+    ]
+  }.
+
+@!{CreateM4Rule}
+%create(M4,?m4) :-
+  %create(Sling,?sling),
+  %create(UpperHalf,?upper),
+  %create(LowerHalf,?lower),
+  %create_name(M4,?m4),
+  t_insert{
+    ?m4 : M4 [
+      sling -> ?sling,
+      upper -> ?upper,
+      lower -> ?lower
+    ]
+  }.
+
+@!{CreateSlingRule}
+%create(Sling,?sling) :-
+  %create_name(Sling,?sling),
+  t_insert{
+    ?sling : Sling [
+      attachedFront -> \true,
+      attachedRear -> \true
+    ]
+  }.
+
+@!{CreateUpperHalfRule}
+%create(UpperHalf,?upper) :-
+  %create(BoltCarrierGroup,?bcg),
+  %create(CarryHandle,?carryHandle),
+  %create(Chamber,?chamber),
+  %create(UpperHandGuard,?uhg),
+  %create(LowerHandGuard,?lhg),
+  %create(SlipRing,?slipRing),
+  %create(SlingSwivel,?slingSwivel),
+  %create_name(UpperHalf,?upper),
+  t_insert{
+    ?upper : UpperHalf [
+      boltCarrierGroup -> ?bcg,
+      carryHandle -> ?carryHandle,
+      chamber -> ?chamber,
+      upperHandguard -> ?uhg,
+      lowerHandguard -> ?lhg,
+      slipRing -> ?slipRing,
+      slingSwivel -> ?slingSwivel,
+      attachedFront -> \true,
+      attachedRear -> \true
+    ]
+  }.
+
+@!{CreateBoltCarrierGroupRule}
+%create(BoltCarrierGroup,?bcg) :-
+  %create(Bolt,?bolt),
+  %create(ChargingHandle,?chargingHandle),
+  %create(BoltCam,?boltCam),
+  %create(FiringPinRetainingPin,?fprpin),
+  %create(FiringPin,?firingPin),
+  %create_name(BoltCarrierGroup,?bcg),
+  t_insert{ 
+    ?bcg : BoltCarrierGroup [
+      attached -> \true,
+      boltCarrierGroupState -> BoltForward,
+      bolt -> ?bolt,
+      chargingHandle -> ?chargingHandle,
+      boltCam -> ?boltCam,
+      firingPinRetainingPin -> ?fprpin,
+      firingPin -> ?firingPin    
+    ]
+  }.
+
+@!{CreateBoltRule}
+%create(Bolt,?bolt) :-
+  %create(ExtractorPin,?exPin),
+  %create(Extractor,?extractor),
+  %create_name(Bolt,?bolt),
+  t_insert{
+    ?bolt : Bolt [
+      attached -> \true,
+      extractorPin -> ?exPin,
+      extractor -> ?extractor
+    ]
+  }.
+
+@!{CreateExtractorPinRule}
+%create(ExtractorPin,?exPin) :-
+  %create_name(ExtractorPin,?exPin),
+  t_insert{
+    ?exPin : ExtractorPin [ attached -> \true ]
+  }.
+
+@!{CreateExtractorRule}
+%create(Extractor,?extractor) :-
+  %create_name(Extractor,?extractor),
+  t_insert{
+    ?extractor : Extractor [ attached -> \true ]
+  }.
+
+@!{CreateChargingHandleRule}
+%create(ChargingHandle,?chargingHandle) :-
+  %create_name(ChargingHandle,?chargingHandle),
+  t_insert{
+    ?chargingHandle : ChargingHandle [
+      attached -> \true, 
+      position -> ChargingHandleForward 
+    ]
+  }.
+
+@!{CreateBoltCamRule}
+%create(BoltCam,?boltCam) :-
+  %create_name(BoltCam,?boltCam),
+  t_insert{
+    ?boltCam : BoltCam [ attached -> \true ]
+  }.
+
+@!{CreateFiringPinRetainingPinRule}
+%create(FiringPinRetainingPin,?fprpin) :-
+  %create_name(FiringPinRetainingPin,?fprpin),
+  t_insert{
+    ?fprpin : FiringPinRetainingPin [ attached -> \true ]
+  }.  
+
+@!{CreateFiringPinRule}
+%create(FiringPin,?firingPin) :-
+  %create_name(FiringPin,?firingPin),
+  t_insert{
+    ?firingPin : FiringPin [ attached -> \true ]
+  }.
+
+@!{CreateCarryHandleRule}
+%create(CarryHandle,?carryHandle) :-
+  %create(CarryHandleScrew,?frontScrew),
+  %create(CarryHandleScrew,?rearScrew),     
+  %create_name(CarryHandle,?carryHandle),
+  t_insert{
+    ?carryHandle : CarryHandle [
+      attached -> \true, 
+      frontScrew -> ?frontScrew,
+      rearScrew -> ?rearScrew
+    ]
+  }.
+
+@!{CreateCarryHandleScrewRule}
+%create(CarryHandleScrew,?screw) :-
+  %create_name(CarryHandleScrew,?screw),
+  t_insert{
+    ?screw : CarryHandleScrew [ tightened -> \true ]
+  }.
+
+@!{CreateChamberRule}
+%create(Chamber,?chamber) :-
+  %create_name(Chamber,?chamber),
+  t_insert{ ?chamber : Chamber }.
+
+@!{CreateUpperHandGuardRule}
+%create(UpperHandGuard,?uhg) :-
+  %create_name(UpperHandGuard,?uhg),
+  t_insert{
+    ?uhg : UpperHandGuard [ attached -> \true ] 
+  }.  
+
+@!{CreateLowerHandGuardRule}
+%create(LowerHandGuard,?lhg) :-
+  %create_name(LowerHandGuard,?lhg),
+  t_insert{
+    ?lhg : LowerHandGuard [ attached -> \true ] 
+  }.  
+
+@!{CreateSlipRingRule}
+%create(SlipRing,?slipRing) :-
+  %create_name(SlipRing,?slipRing),
+  t_insert{
+    ?slipRing : SlipRing [ pressedDown -> \false ] 
+  }. 
+
+@!{CreateSlingSwivelRule}
+%create(SlingSwivel,?slingSwivel) :-
+  %create_name(SlingSwivel,?slingSwivel),
+  t_insert{ ?slingSwivel : SlingSwivel }.
+
+@!{CreateLowerHalfRule}
+%create(LowerHalf,?lower) :-
+  %create(Selector,?selector),
+  %create(Hammer,?hammer),
+  %create(Trigger,?trigger),
+  %create(PivotPin,?pivotPin),
+  %create(TakedownPin,?takedownPin),
+  %create(BoltCatch,?boltCatch),
+  %create(Magazine,?magazine),
+  %create(MagazineReleaseButton,?magreleasebutton),
+  %create(ButtStock,?buttstock),
+  %create(LowerReceiverExtension,?lre),
+  %create(BufferRetainer,?bufferRetainer),
+  %create_name(LowerHalf,?lower),
+  t_insert{
+    ?lower : LowerHalf [
+      selector -> ?selector,
+      hammer -> ?hammer,
+      trigger -> ?trigger,
+      pivotPin -> ?pivotPin,
+      takedownPin -> ?takedownPin,
+      boltCatch -> ?boltCatch,
+      magazine -> ?magazine,
+      magazineReleaseButton -> ?magreleasebutton,
+      buttStock -> ?buttstock,
+      lowerReceiverExtension -> ?lre,
+      bufferRetainer -> ?bufferRetainer
+    ]
+  }.  
+
+@!{CreateSelectorRule}
+%create(Selector,?selector) :-
+  %create_name(Selector,?selector),
+  t_insert{
+    ?selector : Selector [ switchPosition -> Semi ]
+  }. 
+
+@!{CreateHammerRule}
+%create(Hammer,?hammer) :-
+  %create_name(Hammer,?hammer),
+  t_insert{
+    ?hammer : Hammer [ cocked -> \false ]
+  }.
+
+@!{CreateTriggerRule}
+%create(Trigger,?trigger) :-
+  %create_name(Trigger,?trigger),
+  t_insert{
+    ?trigger : Trigger [ pulled -> \false ]
+  }.
+
+@!{CreatePivotPinRule}
+%create(PivotPin,?pivotPin) :-
+  %create(PivotPinHead,?pivotPinHead),
+  %create(PivotPinTail,?pivotPinTail),
+  %create_name(PivotPin,?pivotPin),
+  t_insert{
+    ?pivotPin : PivotPin [ 
+      head -> ?pivotPinHead,
+      tail -> ?pivotPinTail,
+      pinState -> PinIn 
+    ]
+  }.
+
+@!{CreatePivotPinHeadRule}
+%create(PivotPinHead,?pivotPinHead) :-
+  %create_name(PivotPinHead,?pivotPinHead),
+  t_insert{ ?pivotPinHead : PivotPinHead }.
+
+@!{CreatePivotPinTailRule}
+%create(PivotPinTail,?pivotPinTail) :-
+  %create_name(PivotPinTail,?pivotPinTail),
+  t_insert{ ?pivotPinTail : PivotPinTail }.
+
+@!{CreateTakedownPinRule}
+%create(TakedownPin,?takedownPin) :-
+  %create(TakedownPinHead,?takedownPinHead),
+  %create(TakedownPinTail,?takedownPinTail),
+  %create_name(TakedownPin,?takedownPin),
+  t_insert {    
+    ?takedownPin : TakedownPin [ 
+      head -> ?takedownPinHead,
+      tail -> ?takedownPinTail,
+      pinState -> PinIn
+    ]
+  }.
+
+@!{CreateTakedownPinHeadRule}
+%create(TakedownPinHead,?takedownPinHead) :-
+  %create_name(TakedownPinHead,?takedownPinHead),
+  t_insert{ ?takedownPinHead : TakedownPinHead }.
+
+@!{CreateTakedownPinTailRule}
+%create(TakedownPinTail,?takedownPinTail) :-
+  %create_name(TakedownPinTail,?takedownPinTail),
+  t_insert{ ?takedownPinTail : TakedownPinTail }.
+
+@!{CreateBoltCatchRule}
+%create(BoltCatch,?boltCatch) :-
+  %create(BoltCatchBottom,?boltCatchBottom),
+  %create(BoltCatchTop,?boltCatchTop),
+  %create_name(BoltCatch,?boltCatch),
+  t_insert{
+    ?boltCatch : BoltCatch [ 
+      boltCatchBottom -> ?boltCatchBottom,
+      boltCatchTop -> ?boltCatchTop,
+      engaged -> \false 
+    ]
+  }.
+
+@!{CreateBoltCatchBottomRule}
+%create(BoltCatchBottom,?boltCatchBottom) :-
+  %create_name(BoltCatchBottom,?boltCatchBottom),
+  t_insert{ ?boltCatchBottom : BoltCatchBottom }.
+
+@!{CreateBoltCatchTopRule}
+%create(BoltCatchTop,?boltCatchTop) :-
+  %create_name(BoltCatchTop,?boltCatchTop),
+  t_insert{ ?boltCatchTop : BoltCatchTop }.
+
+%attach_rounds([],?).
+%attach_rounds([?r|?rs],?mag) :-
+  t_insert{ ?r [ location -> ?mag ]},
+  %attach_rounds(?rs,?mag).
+
+@!{CreateMagazineRule}
+%create(Magazine,?magazine) :-
+  %create_name(Magazine,?magazine),
+  %create_n(Round,30,?rounds),
+  %attach_rounds(?rounds,?magazine), // hack
+  t_insert{ 
+    ?magazine : Magazine [ 
+      attached -> \false,
+      rounds -> ?rounds
+    ] 
+  }.  
+
+@!{CreateRoundRule}
+%create(Round,?round) :-
+  %create(Casing,?casing),
+  %create_name(Round,?round),
+  t_insert{
+    ?round : Round [ casing -> ?casing ]
+  }.
+
+@!{CreateCasingRule}
+%create(Casing,?casing) :-
+  %create_name(Casing,?casing),
+  t_insert{ ?casing : Casing }.
+
+@!{CreateMagazineReleaseButtonRule}
+%create(MagazineReleaseButton,?magreleasebutton) :-
+  %create_name(MagazineReleaseButton,?magreleasebutton),
+  t_insert{ ?magreleasebutton : MagazineReleaseButton }.
+
+@!{CreateButtStockRule}
+%create(ButtStock,?buttstock) :-
+  %create(ButtStockLockLever,?buttStockLockLever),
+  %create(SlingLoop,?slingLoop),
+  %create_name(ButtStock,?buttstock),
+  t_insert{ 
+    ?buttstock : ButtStock [
+      slingLoop -> ?slingLoop,
+      attached -> \true,
+      fullyOpen -> \false,
+      lockLever -> ?buttStockLockLever
+    ]
+  }.
+
+@!{CreateButtStockLockLeverRule}
+%create(ButtStockLockLever,?buttStockLockLever) :-
+  %create_name(ButtStockLockLever,?buttStockLockLever),
+  t_insert{ ?buttStockLockLever : ButtStockLockLever [ isOpen -> \false ] }.
+ 
+@!{CreateSlingLoopRule}
+%create(SlingLoop,?slingLoop) :-
+  %create_name(SlingLoop,?slingLoop),
+  t_insert{ ?slingLoop : SlingLoop }.
+
+@!{CreateLowerReceiverExtensionRule}
+%create(LowerReceiverExtension,?lre) :-
+  %create(Buffer,?buffer),
+  %create_name(LowerReceiverExtension,?lre),
+  t_insert{
+    ?lre : LowerReceiverExtension [ 
+      attached -> \true,
+      buffer -> ?buffer
+    ]
+  }.
+
+@!{CreateBufferRule}
+%create(Buffer,?buffer) :-
+  %create_name(Buffer,?buffer),
+  t_insert{
+    ?buffer : Buffer [ 
+        attached -> \true,
+        pushedBack -> \false
+    ]
+  }.
+
+@!{CreateBufferRetainerRule}
+%create(BufferRetainer,?bufferRetainer) :-
+  %create_name(BufferRetainer,?bufferRetainer),
+  t_insert{
+    ?bufferRetainer : BufferRetainer [ pressed -> \false ]
+  }.
+
+
+// Cleaning equipment
+
+CleaningRod :: PhysicalObject [|
+  cleaningRodBottomSegment {1..1} => CleaningRodBottomSegment,
+  cleaningRodMiddleSegment {1..1} => CleaningRodMiddleSegment,
+  cleaningRodTopSegment {1..1} => CleaningRodTopSegment,  // attaches to the "top" rod segment
+  cleaningRodHandle {1..1} => CleaningRodHandle,  // attaches to the "bottom" rod segment
+  cleaningRodTip {1..1} => CleaningRodTip  // the patch holder
+|].
+
+CleaningRodSegment :: PhysicalObject [||].
+
+CleaningRodBottomSegment :: CleaningRodSegment [|
+  attached {1..1} => \boolean  // i.e. attached to the middle segment
+|].
+
+CleaningRodMiddleSegment :: CleaningRodSegment [||].
+
+CleaningRodTopSegment :: CleaningRodSegment [|
+  attached {1..1} => \boolean  // i.e. attached to the middle segment
+|].
+
+CleaningRodHandle :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+CleaningRodTip :: PhysicalObject [|
+  attached {1..1} => \boolean
+|].
+
+CleaningPatch :: PhysicalObject [||].
+
+Brush  :: PhysicalObject [||].
+
+BoreBrush :: Brush [||].
+
+WornOutBoreBrush :: Brush [||].
+
+ChamberBrush :: Brush [||].
+
+Liquid :: PhysicalObject [||].
+
+Solvent :: Liquid [||].
+
+CLP :: Solvent [||].
+
+PipeCleaner :: PhysicalObject [||].
+
+WipeCloth :: PhysicalObject [||].  // for step 3.d.1
+
+@!{M4DirectPartSubPropertiesRule}
+?x [ hasDirectPart -> ?y ] :- 
+  ?x [ target -> ?y ] ;
+  ?x [ sling -> ?y ] ; 
+  ?x [ upper -> ?y ] ; 
+  ?x [ lower -> ?y ] ;
+  ?x [ boltCarrierGroup -> ?y ] ; 
+  ?x [ carryHandle -> ?y ] ; 
+  ?x [ upperHandguard -> ?y ] ; 
+  ?x [ lowerHandguard -> ?y ] ; 
+  ?x [ slipRing -> ?y ] ; 
+  ?x [ slingSwivel -> ?y ] ;
+  ?x [ selector -> ?y ] ; 
+  ?x [ magazine -> ?y ] ; 
+  ?x [ magazineReleaseButton -> ?y ] ; 
+  ?x [ hammer -> ?y ] ;
+  ?x [ trigger -> ?y ] ; 
+  ?x [ pivotPin -> ?y ] ; 
+  ?x [ takedownPin -> ?y ] ; 
+  ?x [ boltCatch -> ?y ] ; 
+  ?x [ buttStock -> ?y ] ; 
+  ?x [ lowerReceiverExtension -> ?y ] ; 
+  ?x [ bufferRetainer -> ?y ] ;
+  ?x [ buffer -> ?y ] ; 
+  ?x [ slingLoop -> ?y ] ; 
+  ?x [ lockLever -> ?y ] ; 
+  ?x [ bolt -> ?y ] ; 
+  ?x [ chargingHandle -> ?y ] ; 
+  ?x [ boltCam -> ?y ] ; 
+  ?x [ firingPinRetainingPin -> ?y ] ;
+  ?x [ firingPin -> ?y ] ; 
+  ?x [ extractorPin -> ?y ] ; 
+  ?x [ extractor -> ?y ] ; 
+  ?x [ casing -> ?y ] ; 
+  ?x [ frontScrew -> ?y ] ; 
+  ?x [ rearScrew -> ?y ] ;
+  ?x [ cleaningRodSegment -> ?y ] ;
+  ?x [ cleaningRodHandle -> ?y ] ;
+  ?x [ cleaningRodTip -> ?y ] ;
+  ?x [ rounds -> ?rs ], ?rs [ member(?y) ]@\basetype. 
+
+@!{M4DirectRegionSubPropertiesRule}
+?x [ hasDirectRegion -> ?y ] :-
+  ?x [ chamber -> ?y ] ; 
+  ?x [ boltCatchBottom -> ?y ] ; 
+  ?x [ boltCatchTop -> ?y ] ; 
+  ?x [ head -> ?y ] ; 
+  ?x [ tail -> ?y ].
+
+
+// Convenience predicate. A lot of the actions require this boilerplate.
+
+@!{WeaponAssembledRule}
+weapon_assembled(?M4) :-
+  ?M4 [
+    upper -> ? [
+      boltCarrierGroup -> ? [
+        attached -> \true,
+        bolt -> ? [ 
+          attached -> \true,
+          extractorPin -> ? [ attached -> \true ],
+          extractor -> ? [ attached -> \true ]
+        ],
+        chargingHandle -> ? [ attached -> \true ],
+        boltCam -> ? [ attached -> \true ],
+        firingPinRetainingPin -> ? [ attached -> \true ],
+        firingPin -> ? [ attached -> \true ]
+      ],
+      carryHandle -> ? [ 
+          attached -> \true,
+          frontScrew -> ? [ tightened -> \true ],
+          rearScrew -> ? [ tightened -> \true ]
+      ],
+      upperHandguard -> ? [ attached -> \true ],
+      lowerHandguard -> ? [ attached -> \true ],
+      slipRing -> ? [ pressedDown -> \false ],
+      attachedFront -> \true,
+      attachedRear -> \true
+    ],
+    lower -> ? [
+      pivotPin -> ? [ pinState -> PinIn ],
+      takedownPin -> ? [ pinState -> PinIn ],
+      buttStock -> ? [ attached -> \true ],
+      lowerReceiverExtension -> ? [ 
+        attached -> \true,
+        buffer -> ? [ attached -> \true ]
+      ],
+      bufferRetainer -> ? [ pressed -> \false ]
+    ]
+  ].
+
+
+//--- Actions ---
+
+@!{DetachSlingFrontHelperRule}
+%detach_sling_front(?M4) :- %do(detach(?M4.sling,?M4.upper.slingSwivel),?,?).
+
+@!{DetachSlingFrontRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?sling^^Sling, detachedFrom -> ?swivel^^SlingSwivel ],
+  // Preconditions
+  ?_M4 [ 
+    upper -> ? [ slingSwivel -> ?swivel ],  
+    sling -> ?sling [ attachedFront -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?sling [ attachedFront -> \true ]} ],
+  ?add = [ ${?sling [ attachedFront -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{DetachSlingRearHelperRule}
+%detach_sling_rear(?M4) :- %do(detach(?M4.sling,?M4.lower.buttStock.slingLoop),?,?).
+
+@!{DetachSlingRearRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?sling^^Sling, detachedFrom -> ?slingLoop^^SlingLoop ],
+  // Preconditions
+  ?_M4 [ 
+    lower -> ? [ buttStock -> ? [ slingLoop -> ?slingLoop ] ],  
+    sling -> ?sling [ attachedRear -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?sling [ attachedRear -> \true ]} ],
+  ?add = [ ${?sling [ attachedRear -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{AttachSlingFrontHelperRule}
+%attach_sling_front(?M4) :- %do(attach(?M4.sling,?M4.upper.slingSwivel),?,?).
+
+@!{AttachSlingFrontRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?sling^^Sling, attachedTo -> ?slingSwivel^^SlingSwivel ],
+  // Preconditions
+  ?_M4 [ 
+    upper -> ? [ slingSwivel -> ?slingSwivel ],
+    sling -> ?sling [ attachedFront -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?sling [ attachedFront -> \false ]} ], 
+  ?add = [ ${?sling [ attachedFront -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{AttachSlingRearHelperRule}
+%attach_sling_rear(?M4) :- %do(attach(?M4.sling,?M4.lower.buttStock.slingLoop),?,?).
+
+@!{AttachSlingRearRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?sling^^Sling, attachedTo -> ?slingLoop^^SlingLoop ],  
+  // Preconditions
+  ?_M4 [ 
+    lower -> ? [ buttStock -> ? [ slingLoop -> ?slingLoop ] ],  
+    sling -> ?sling [ attachedRear -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?sling [ attachedRear -> \false ]} ], 
+  ?add = [ ${?sling [ attachedRear -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PressSlipRingHelperRule}
+%press_slip_ring(?M4) :- %do(press(?M4.upper.slipRing),?,?).
+
+@!{PressSlipRingRule}
+%do(?action^^Press,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPressed -> ?slipRing^^SlipRing ],
+  // Preconditions
+  ?slipRing [ pressedDown -> \false ],
+  // Effects
+  ?del = [ ${?slipRing [ pressedDown -> \false ]} ],
+  ?add = [ ${?slipRing [ pressedDown -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{LiftSlipRingHelperRule}
+%lift_slip_ring(?M4) :- %do(lift(?M4.upper.slipRing),?,?).
+
+@!{LiftSlipRingRule}
+%do(?action^^Lift,?del,?add) :-
+  // Action Parameters
+  ?action [ thingLifted -> ?slipRing^^SlipRing ],
+  // Preconditions
+  ?slipRing [ pressedDown -> \true ],
+  // Effects
+  ?del = [ ${?slipRing [ pressedDown -> \true ]} ],
+  ?add = [ ${?slipRing [ pressedDown -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{DetachUpperHandguardHelperRule}
+%detach_upper_handguard(?M4) :- %do(detach(?M4.upper.upperHandguard,?M4.upper),?,?). 
+
+@!{DetachUpperHandguardRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?uhg^^UpperHandGuard, detachedFrom -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?upper [ 
+    upperHandguard -> ?uhg [ attached -> \true ],
+    slipRing -> ? [ pressedDown -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?uhg [ attached -> \true ]} ],
+  ?add = [ ${?uhg [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{AttachUpperHandguardHelperRule}
+%attach_upper_handguard(?M4) :- %do(attach(?M4.upper.upperHandguard,?M4.upper),?,?). 
+
+@!{AttachUpperHandguardRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?uhg^^UpperHandGuard, attachedTo -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?_M4 [ upper -> ?upper [ 
+    upperHandguard -> ?uhg [ attached -> \false ],
+    slipRing -> ? [ pressedDown -> \true ]
+  ]],
+  // Effects
+  ?del = [ ${?uhg [ attached -> \false ]} ],
+  ?add = [ ${?uhg [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{DetachLowerHandguardHelperRule}
+%detach_lower_handguard(?M4) :- %do(detach(?M4.upper.lowerHandguard,?M4.upper),?,?). 
+
+@!{DetachLowerHandguardRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?lhg^^LowerHandGuard, detachedFrom -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?_M4 [ upper -> ?upper [ 
+    lowerHandguard -> ?lhg [ attached -> \true ],
+    slipRing -> ? [ pressedDown -> \true ]
+  ]],
+  // Effects
+  ?del = [ ${?lhg [ attached -> \true ]} ],
+  ?add = [ ${?lhg [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{AttachLowerHandguardHelperRule}
+%attach_lower_handguard(?M4) :- %do(attach(?M4.upper.lowerHandguard,?M4.upper),?,?).
+
+@!{AttachLowerHandguardRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?lhg^^LowerHandGuard, attachedTo -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?_M4 [ upper -> ?upper [ 
+    lowerHandguard -> ?lhg [ attached -> \false ],
+    slipRing -> ? [ pressedDown -> \true ]
+  ]],
+  // Effects
+  ?del = [ ${?lhg [ attached -> \false ]} ],
+  ?add = [ ${?lhg [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushTakedownPinTailHelperRule}  
+%push_takedown_pin_tail(?M4) :- %do(push(?M4.lower.takedownPin.tail),?,?).
+
+@!{PushTakedownPinTailRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?tdpintail^^TakedownPinTail ],
+  // Preconditions
+  ?tdpin : TakedownPin [ tail -> ?tdpintail, pinState -> PinIn ],
+  // Effects
+  ?del = [ ${?tdpin [ pinState -> PinIn ]} ], 
+  ?add = [ ${?tdpin [ pinState -> PinPushed ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PullTakedownPinHelperRule} 
+%pull_takedown_pin(?M4) :- %do(pull(?M4.lower.takedownPin),?,?).
+
+@!{PullTakedownPinRule}
+%do(?action^^Pull,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPulled -> ?tdpin^^TakedownPin ],
+  // Preconditions
+  ?tdpin [ pinState -> PinPushed ],
+  // Effects
+  ?del = [ ${?tdpin [ pinState -> PinPushed ]} ], 
+  ?add = [ ${?tdpin [ pinState -> PinPulled ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushTakedownPinHeadHelperRule}
+%push_takedown_pin_head(?M4) :- %do(push(?M4.lower.takedownPin.head),?,?).
+
+@!{PushTakedownPinHeadRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?tdpinhead^^TakedownPinHead ],
+  // Preconditions
+  ?_M4 [ 
+    lower -> ? [ takedownPin -> ?tdpin [ head -> ?tdpinhead, pinState -> PinPulled ]],
+    upper -> ? [ attachedRear -> \true]
+  ],
+  // Effects
+  ?del = [ ${?tdpin [ pinState -> PinPulled ]} ], 
+  ?add = [ ${?tdpin [ pinState -> PinIn ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushPivotPinTailHelperRule}
+%push_pivot_pin_tail(?M4) :- %do(push(?M4.lower.pivotPin.tail),?,?).
+
+@!{PushPivotPinTailRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?ppintail^^PivotPinTail ],
+  // Preconditions
+  ?ppin : PivotPin [ tail -> ?ppintail, pinState -> PinIn ],
+  // Effects
+  ?del = [ ${?ppin [ pinState -> PinIn ]} ],
+  ?add = [ ${?ppin [ pinState -> PinPushed ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PullPivotPinHelperRule}
+%pull_pivot_pin(?M4) :- %do(pull(?M4.lower.pivotPin),?,?).
+
+@!{PullPivotPinRule}
+%do(?action^^Pull,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPulled -> ?ppin^^PivotPin ],
+  // Preconditions
+  ?ppin [ pinState -> PinPushed ],
+  // Effects
+  ?del = [ ${?ppin [ pinState -> PinPushed ]} ], 
+  ?add = [ ${?ppin [ pinState -> PinPulled ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushPivotPinHeadHelperRule}
+%push_pivot_pin_head(?M4) :- %do(push(?M4.lower.pivotPin.head),?,?).
+
+@!{PushPivotPinHeadRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?ppinhead^^PivotPinHead ],
+  // Preconditions
+  ?_M4 [ 
+    lower -> ? [ pivotPin -> ?ppin [ head -> ?ppinhead, pinState -> PinPulled ]],
+    upper -> ? [ attachedFront -> \true]
+  ],
+  // Effects
+  ?del = [ ${?ppin [ pinState -> PinPulled ]} ], 
+  ?add = [ ${?ppin [ pinState -> PinIn ]} ],
+  %kb_update(?del,?add).
+
+
+// Does it need to be cocked?
+@!{OpenUpperHelperRule}
+%open_upper(?M4) :- %do(open(?M4),?,?). 
+
+@!{OpenUpperRule}
+%do(?action^^Open,?del,?add) :-
+  // Action Parameters
+  ?action [ thingOpened -> ?M4^^M4 ],
+  // Preconditions
+  ?M4 [ 
+    lower -> ? [ 
+      pivotPin -> ? [ pinState -> PinIn ],
+      takedownPin -> ? [ pinState -> PinPulled ]
+    ],
+    upper -> ?upper [ 
+      boltCarrierGroup -> ? [ boltCarrierGroupState -> BoltForward ],
+      attachedFront -> \true,
+      attachedRear -> \true
+    ]
+  ],
+  // Effects
+  ?del = [ ${?upper [ attachedRear -> \true ]} ], 
+  ?add = [ ${?upper [ attachedRear -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+// Pivot the upper closed
+@!{CloseUpperHelperRule}
+%close_upper(?M4) :- %do(close(?M4),?,?).
+
+@!{CloseUpperRule}
+%do(?action^^Close,?del,?add) :-
+  // Action Parameters
+  ?action [ thingClosed -> ?M4^^M4 ],
+  // Preconditions
+  ?M4 [ 
+    lower -> ? [ 
+      pivotPin -> ? [ pinState -> PinIn ],
+      takedownPin -> ? [ pinState -> PinPulled ]
+    ],
+    upper -> ?upper [ 
+      boltCarrierGroup -> ? [ boltCarrierGroupState -> BoltForward ],
+      attachedFront -> \true,
+      attachedRear -> \false
+    ]
+  ],
+  // Effects
+  ?del = [ ${?upper [ attachedRear -> \false ]} ], 
+  ?add = [ ${?upper [ attachedRear -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{DetachUpperFromLowerHelperRule}
+%separate_halves(?M4) :- %do(detach(?M4.upper,?M4.lower),?,?).
+
+@!{DetachUpperFromLowerRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?upper^^UpperHalf, detachedFrom -> ?lower^^LowerHalf ],
+  // Preconditions
+  ?_M4 [ 
+    lower -> ?lower [ 
+      pivotPin -> ? [ pinState -> PinPulled ],
+      takedownPin -> ? [ pinState -> PinPulled ]
+    ],
+    upper -> ?upper [ 
+      boltCarrierGroup -> ? [ boltCarrierGroupState -> BoltForward ],
+      attachedFront -> \true
+    ]
+  ],
+  // Effects
+  ?del = [ ${?upper [ attachedRear -> ? ]}, ${?upper [ attachedFront -> \true ]} ], 
+  ?add = [ ${?upper [ attachedRear -> \false ]}, ${?upper [ attachedFront -> \false ]} ],
+  %kb_update(?del,?add).
+  
+
+// Note: This is the disassembly version, which requires the rifle to be opened up.
+// For the assembled version, see pull_and_hold_charging_handle
+@!{PullChargingHandleHelperRule}
+%pull_charging_handle(?M4) :- %do(pull(?M4.upper.boltCarrierGroup.chargingHandle),?,?).
+
+@!{PullChargingHandleRule}
+%do(?action^^Pull,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPulled -> ?chargingHandle^^ChargingHandle ],
+  // Preconditions
+  ?_upper : UpperHalf [ 
+    boltCarrierGroup -> ?bcg [ 
+      chargingHandle -> ?chargingHandle,
+      attached -> \true,
+      boltCarrierGroupState -> BoltForward
+    ],
+    attachedRear -> \false
+  ],
+  // Effects
+  ?del = [ ${?bcg [ attached -> \true, boltCarrierGroupState -> BoltForward ]} ], 
+  ?add = [ ${?bcg [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{InsertBoltCarrierHelperRule}
+%insert_bolt_carrier_group(?M4) :- %do(insert(?M4.upper.boltCarrierGroup,?M4.upper),?,?).
+
+@!{InsertBoltCarrierRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?bcg^^BoltCarrierGroup, insertedInto -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?upper [ 
+    boltCarrierGroup -> ?bcg [ 
+      attached -> \false,
+      chargingHandle -> ? [ attached -> \true ]
+    ],
+    attachedRear -> \false
+  ],
+  // Effects
+  ?del = [ ${?bcg [ attached -> \false ]} ],
+  ?add = [ ${?bcg [ attached -> \true, boltCarrierGroupState -> BoltForward ]} ], 
+  %kb_update(?del,?add).
+
+
+// In reality, it kind of just pops off, but we might as well capture this
+@!{DetachChargingHandleHelperRule}
+%detach_charging_handle(?M4) :- %do(detach(?M4.upper.boltCarrierGroup.chargingHandle,?M4.upper.boltCarrierGroup),?,?).
+
+@!{DetachChargingHandleRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?chargingHandle^^ChargingHandle, detachedFrom -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    chargingHandle -> ?chargingHandle [ attached -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?chargingHandle [ attached -> \true ]} ],
+  ?add = [ ${?chargingHandle [ attached -> \false]} ],
+  %kb_update(?del,?add).
+ 
+
+@!{AttachChargingHandleHelperRule}
+%attach_charging_handle(?M4) :- %do(attach(?M4.upper.boltCarrierGroup.chargingHandle,?M4.upper.boltCarrierGroup),?,?).
+
+@!{AttachChargingHandleRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?chargingHandle^^ChargingHandle, attachedTo -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    chargingHandle -> ?chargingHandle [ attached -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?chargingHandle [ attached -> \false ]} ],
+  ?add = [ ${?chargingHandle [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{ExtractFiringPinRetainingPinHelperRule}
+%extract_firing_pin_retaining_pin(?M4) :- %do(extract(?M4.upper.boltCarrierGroup.firingPinRetainingPin,?M4.upper.boltCarrierGroup),?,?).
+
+@!{ExtractFiringPinRetainingPinRule}
+%do(?action^^Extract,?del,?add) :-
+  // Action Parameters
+  ?action [ thingExtracted -> ?frpin^^FiringPinRetainingPin, extractedFrom -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    firingPinRetainingPin -> ?frpin [ attached -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?frpin [ attached -> \true ]} ], 
+  ?add = [ ${?frpin [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{InsertFiringPinRetainingPinHelperRule}
+%insert_firing_pin_retaining_pin(?M4) :- %do(insert(?M4.upper.boltCarrierGroup.firingPinRetainingPin, ?M4.upper.boltCarrierGroup),?,?).
+
+@!{InsertFiringPinRetainingPinRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?frpin^^FiringPinRetainingPin, insertedInto -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    firingPinRetainingPin -> ?frpin [ attached -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?frpin [ attached -> \false ]} ], 
+  ?add = [ ${?frpin [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{ExtractFiringPinHelperRule}
+%extract_firing_pin(?M4) :- %do(extract(?M4.upper.boltCarrierGroup.firingPin,?M4.upper.boltCarrierGroup),?,?).
+
+@!{ExtractFiringPinRule}
+%do(?action^^Extract,?del,?add) :-
+  // Action Parameters
+  ?action [ thingExtracted -> ?fpin^^FiringPin, extractedFrom -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    firingPinRetainingPin -> ? [ attached -> \false ],
+    firingPin -> ?fpin [ attached -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?fpin [ attached -> \true ]} ], 
+  ?add = [ ${?fpin [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{InsertFiringPinHelperRule}
+%insert_firing_pin(?M4) :- %do(insert(?M4.upper.boltCarrierGroup.firingPin,?M4.upper.boltCarrierGroup),?,?).
+
+@!{InsertFiringPinRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?fpin^^FiringPin, insertedInto -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    firingPinRetainingPin -> ? [ attached -> \false ],
+    firingPin -> ?fpin [ attached -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?fpin [ attached -> \false ]} ], 
+  ?add = [ ${?fpin [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+// Does this require the firing pin retaining pin to be out?
+@!{ExtractBoltCamHelperRule}
+%extract_bolt_cam(?M4) :- %do(extract(?M4.upper.boltCarrierGroup.boltCam,?M4.upper.boltCarrierGroup),?,?).
+
+@!{ExtractBoltCamRule}
+%do(?action^^Extract,?del,?add) :-
+  // Action Parameters
+  ?action [ thingExtracted -> ?boltCam^^BoltCam, extractedFrom -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    boltCam -> ?boltCam [ attached -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?boltCam [ attached -> \true ]} ], 
+  ?add = [ ${?boltCam [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+  
+
+@!{InsertBoltCamHelperRule}
+%insert_bolt_cam(?M4) :- %do(insert(?M4.upper.boltCarrierGroup.boltCam,?M4.upper.boltCarrierGroup),?,?).
+
+@!{InsertBoltCamRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?boltCam^^BoltCam, insertedInto -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    boltCam -> ?boltCam [ attached -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?boltCam [ attached -> \false ]} ], 
+  ?add = [ ${?boltCam [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{ExtractBoltHelperRule}
+%extract_bolt(?M4) :- %do(extract(?M4.upper.boltCarrierGroup.bolt,?M4.upper.boltCarrierGroup),?,?).
+
+@!{ExtractBoltRule}
+%do(?action^^Extract,?del,?add) :-
+  // Action Parameters
+  ?action [ thingExtracted -> ?bolt^^Bolt, extractedFrom -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg : BoltCarrierGroup [ 
+    attached -> \false,
+    boltCam -> ? [ attached -> \false ],
+    bolt -> ?bolt [ attached -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?bolt [ attached -> \true ]} ], 
+  ?add = [ ${?bolt [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{InsertBoltHelperRule}
+%insert_bolt(?M4) :- %do(insert(?M4.upper.boltCarrierGroup.bolt,?M4.upper.boltCarrierGroup),?,?).
+
+@!{InsertBoltRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?bolt^^Bolt, insertedInto -> ?bcg^^BoltCarrierGroup ],
+  // Preconditions
+  ?bcg [ 
+    attached -> \false,
+    boltCam -> ? [ attached -> \false ],
+    bolt -> ?bolt [ attached -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?bolt [ attached -> \false ]} ], 
+  ?add = [ ${?bolt [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{ExtractExtractorPinHelperRule}
+%extract_extractor_pin(?M4) :- %do(extract(?M4.upper.boltCarrierGroup.bolt.extractorPin,?M4.upper.boltCarrierGroup.bolt),?,?).
+
+@!{ExtractExtractorPinRule}
+%do(?action^^Extract,?del,?add) :-
+  // Action Parameters
+  ?action [ thingExtracted -> ?expin^^ExtractorPin, extractedFrom -> ?bolt^^Bolt ],
+  // Preconditions
+  ?bolt [ 
+    attached -> \false,
+    extractorPin -> ?expin [ attached -> \true ] 
+  ],
+  // Effects
+  ?del = [ ${?expin [ attached -> \true ]} ], 
+  ?add = [ ${?expin [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{InsertExtractorPinHelperRule}
+%insert_extractor_pin(?M4) :- %do(insert(?M4.upper.boltCarrierGroup.bolt.extractorPin, ?M4.upper.boltCarrierGroup.bolt),?,?).
+
+@!{InsertExtractorPinRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?expin^^ExtractorPin, insertedInto -> ?bolt^^Bolt ],
+  // Preconditions
+  ?bolt [ 
+    attached -> \false,
+    extractorPin -> ?expin [ attached -> \false ] 
+  ],
+  // Effects
+  ?del = [ ${?expin [ attached -> \false ]} ], 
+  ?add = [ ${?expin [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{ExtractExtractorHelperRule}
+%extract_extractor(?M4) :- %do(extract(?M4.upper.boltCarrierGroup.bolt.extractor,?M4.upper.boltCarrierGroup.bolt),?,?).
+
+@!{ExtractExtractorRule}
+%do(?action^^Extract,?del,?add) :-
+  // Action Parameters
+  ?action [ thingExtracted -> ?ex^^Extractor, extractedFrom -> ?bolt^^Bolt ],
+  // Preconditions
+  ?bolt [ 
+    attached -> \false,
+    extractorPin -> ? [ attached -> \false ],
+    extractor -> ?ex [ attached -> \true] 
+  ],
+  // Effects
+  ?del = [ ${?ex [ attached -> \true]} ], 
+  ?add = [ ${?ex [ attached -> \false]} ],
+  %kb_update(?del,?add).
+
+
+@!{InsertExtractorHelperRule}
+%insert_extractor(?M4) :- %do(insert(?M4.upper.boltCarrierGroup.bolt.extractor,?M4.upper.boltCarrierGroup.bolt),?,?).
+
+@!{InsertExtractorRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?ex^^Extractor, insertedInto -> ?bolt^^Bolt ],
+  // Preconditions
+  ?bolt [ 
+    attached -> \false,
+    extractorPin -> ? [ attached -> \false ],
+    extractor -> ?ex [ attached -> \false] 
+  ],
+  // Effects
+  ?del = [ ${?ex [ attached -> \false]} ], 
+  ?add = [ ${?ex [ attached -> \true]} ],
+  %kb_update(?del,?add).
+
+
+@!{InspectExtractorHelperRule}
+%inspect_extractor(?M4) :- %do(inspect(?M4.upper.boltCarrierGroup.bolt.extractor),?,?).
+
+@!{InspectExtractorRule}
+%do(?action^^Inspect,[],[]) :-
+  // Action Parameters
+  ?action [ thingInspected -> ?ex^^Extractor ],
+  // Preconditions
+  ?_bolt : Bolt [ 
+    attached -> \true,
+    extractorPin -> ? [ attached -> \true ],
+    extractor -> ?ex [ attached -> \true ]
+  ].
+  // Effects - none
+
+
+@!{PullButtstockHelperRule}
+%pull_buttstock(?M4) :- %do(pull(?M4.lower.buttStock),?,?).
+
+@!{PullButtstockRule}
+%do(?action^^Pull,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPulled -> ?buttStock^^ButtStock ],
+  // Preconditions
+  ?buttStock [ attached -> \true ],
+  // Effects
+  ?del = [ ${?buttStock [ fullyOpen -> ? ]} ], 
+  ?add = [ ${?buttStock [ fullyOpen -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushAndHoldLockLeverHelperRule}
+%push_and_hold_lock_lever(?M4) :- %do(push(?M4.lower.buttStock.lockLever),?,?).
+
+@!{PushAndHoldLockLeverRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?lockLever^^ButtStockLockLever ],
+  // Preconditions
+  ? : ButtStock [ 
+    attached -> \true, 
+    fullyOpen -> \true,
+    lockLever -> ?lockLever [ isOpen -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?lockLever [ isOpen -> \false ]} ], 
+  ?add = [ ${?lockLever [ isOpen -> \true ]} ],
+  %kb_update(?del,?add).
+  
+ 
+@!{DetachButtstockHelperRule}
+%detach_buttstock(?M4) :- %do(detach(?M4.lower.buttStock,?M4.lower),?,?).
+
+@!{DetachButtstockRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?buttStock^^ButtStock, detachedFrom -> ?lower^^LowerHalf ],
+  // Preconditions
+  ?lower [
+    buttStock -> ?buttStock [ 
+      attached -> \true,  
+      lockLever -> ?lockLever [ isOpen -> \true ]
+    ]
+  ],
+  // Effects
+  ?del = [ ${?buttStock [ attached -> \true ]}, ${?lockLever [ isOpen -> \true ]} ],
+  ?add = [ ${?buttStock [ attached -> \false ]}, ${?lockLever [ isOpen -> \false ]} ],
+  %kb_update(?del,?add).
+ 
+
+@!{AttachButtstockHelperRule}
+%attach_buttstock(?M4) :- %do(attach(?M4.lower.buttStock,?M4.lower),?,?).
+
+@!{AttachButtstockRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?buttStock^^ButtStock, attachedTo -> ?lower^^LowerHalf ],
+  // Preconditions
+  ?lower [
+    buttStock -> ?buttStock [  
+      attached -> \false  
+    ]
+  ],
+  // Effects
+  ?del = [ ${?buttStock [ attached -> \false ]} ], 
+  ?add = [ ${?buttStock [ attached -> \true ]} ], 
+  %kb_update(?del,?add).
+
+
+@!{LoosenFrontCarryHandleScrewHelperRule}
+%loosen_front_carry_handle_screw(?M4) :- %do(loosen_screw(?M4.upper.carryHandle.frontScrew),?,?).
+
+@!{LoosenFrontCarryHandleScrewRule}
+%do(?action^^LoosenScrew,?del,?add) :-
+  // Action Parameters
+  ?action [ screwLoosened -> ?fscrew^^CarryHandleScrew ],
+  // Preconditions
+  ? : UpperHalf [ carryHandle -> ? [
+    frontScrew -> ?fscrew
+  ]],
+  // Effects
+  ?del = [ ${?fscrew [ tightened -> ? ]} ],
+  ?add = [ ${?fscrew [ tightened -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{TightenFrontCarryHandleScrewHelperRule}
+%tighten_front_carry_handle_screw(?M4) :- %do(tighten_screw(?M4.upper.carryHandle.frontScrew),?,?).
+
+@!{TightenFrontCarryHandleScrewRule}
+%do(?action^^TightenScrew,?del,?add) :-
+  // Action Parameters
+  ?action [ screwTightened -> ?fscrew^^CarryHandleScrew ],
+  // Preconditions
+  ? : UpperHalf [ carryHandle -> ? [
+    frontScrew -> ?fscrew
+  ]],
+  // Effects
+  ?del = [ ${?fscrew [ tightened -> ? ]} ],
+  ?add = [ ${?fscrew [ tightened -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{LoosenRearCarryHandleScrewHelperRule}
+%loosen_rear_carry_handle_screw(?M4) :- %do(loosen_screw(?M4.upper.carryHandle.rearScrew),?,?).
+
+@!{LoosenRearCarryHandleScrewRule}
+%do(?action^^LoosenScrew,?del,?add) :-
+  // Action Parameters
+  ?action [ screwLoosened -> ?rscrew^^CarryHandleScrew ],
+  // Preconditions
+  ? : UpperHalf [ carryHandle -> ? [
+    rearScrew -> ?rscrew
+  ]],
+  // Effects
+  ?del = [ ${?rscrew [ tightened -> ? ]} ],
+  ?add = [ ${?rscrew [ tightened -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{TightenRearCarryHandleScrewHelperRule}
+%tighten_rear_carry_handle_screw(?M4) :- %do(tighten_screw(?M4.upper.carryHandle.rearScrew),?,?).
+
+@!{TightenRearCarryHandleScrewRule}
+%do(?action^^TightenScrew,?del,?add) :-
+  // Action Parameters
+  ?action [ screwTightened -> ?rscrew^^CarryHandleScrew ],
+  // Preconditions
+  ? : UpperHalf [ carryHandle -> ? [
+    rearScrew -> ?rscrew
+  ]],
+  // Effects
+  ?del = [ ${?rscrew [ tightened -> ? ]} ],
+  ?add = [ ${?rscrew [ tightened -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{DetachCarryHandleHelperRule}
+%detach_carry_handle(?M4) :- %do(detach(?M4.upper.carryHandle,?M4.upper),?,?).
+
+@!{DetachCarryHandleRule}
+%do(?action^^Detach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingDetached -> ?carryHandle^^CarryHandle, detachedFrom -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?upper [
+    carryHandle -> ?carryHandle [
+      attached -> \true,
+      frontScrew -> ? [ tightened -> \false ],
+      rearScrew -> ? [ tightened -> \false ]
+    ]
+  ],
+  // Effects
+  ?del = [ ${?carryHandle [ attached -> \true ]} ],
+  ?add = [ ${?carryHandle [ attached -> \false ]} ],
+  %kb_update(?del,?add).
+
+
+@!{AttachCarryHandleHelperRule}
+%attach_carry_handle(?M4) :- %do(attach(?M4.upper.carryHandle,?M4.upper),?,?).
+
+@!{AttachCarryHandleRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ thingAttached -> ?carryHandle^^CarryHandle, attachedTo -> ?upper^^UpperHalf ],
+  // Preconditions
+  ?upper [
+    carryHandle -> ?carryHandle [ 
+      attached -> \false, 
+      frontScrew -> ? [ tightened -> \false ],
+      rearScrew -> ? [ tightened -> \false ]
+    ]
+  ],
+  // Effects
+  ?del = [ ${?carryHandle [ attached -> \false ]} ],
+  ?add = [ ${?carryHandle [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushAndHoldBufferHelperRule}
+%push_and_hold_buffer(?M4) :- %do(push_and_hold(?M4.lower.lowerReceiverExtension.buffer),?,?).
+
+@!{PushAndHoldBufferRule}
+%do(?action^^PushAndHold,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?buffer^^Buffer ],
+  // Preconditions
+  ?_M4 [ 
+    lower -> ? [ lowerReceiverExtension -> ? [ buffer -> ?buffer ]],
+    upper -> ? [ attachedRear -> \false ]
+  ],
+  // Effects
+  ?del = [ ${?buffer [ pushedBack -> ? ]} ],
+  ?add = [ ${?buffer [ pushedBack -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushAndHoldBufferRetainerHelperRule}
+%push_and_hold_buffer_retainer(?M4) :- %do(push_and_hold(?M4.lower.bufferRetainer),?,?).
+
+@!{PushAndHoldBufferRetainerRule}
+%do(?action^^PushAndHold,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?buffRetainer^^BufferRetainer ],
+  // Preconditions
+  ?_M4 [ lower -> ? [
+    bufferRetainer -> ?buffRetainer, 
+    lowerReceiverExtension -> ? [ buffer -> ? [ pushedBack -> \true]]
+  ]],
+  // Effects
+  ?del = [ ${?buffRetainer [ pressed -> ? ]} ],
+  ?add = [ ${?buffRetainer [ pressed -> \true ]} ],
+  %kb_update(?del,?add).
+   
+
+@!{ReleaseBufferHelperRule}
+%release_buffer(?M4) :- %do(release(?M4.lower.lowerReceiverExtension.buffer),?,?).
+
+@!{ReleaseBufferRule}
+%do(?action^^Release,?del,?add) :-
+  // Action Parameters
+  ?action [ thingReleased -> ?buffer^^Buffer ],
+  // Preconditions
+  ?_M4 [ lower -> ? [ 
+    bufferRetainer -> ?buffRetainer, 
+    lowerReceiverExtension -> ? [ buffer -> ?buffer [ pushedBack -> \true]]
+  ]],
+  // Effects
+  \if (?buffRetainer [ pressed -> \true ]) \then
+    (?del = [ ${?buffRetainer [ pressed -> \true ]}, ${?buffer [ attached -> \true ]} ],
+     ?add = [ ${?buffRetainer [ pressed -> \false ]}, ${?buffer [ attached -> \false ]} ])
+  \else
+    (?del = [ ${?buffer [ pushedBack -> \true]} ],
+     ?add = [ ${?buffer [ pushedBack -> \false]} ]),
+  %kb_update(?del,?add).
+
+
+// TODO: Check how to handle the buffer retainer correctly here
+@!{InsertBufferHelperRule}
+%insert_buffer(?M4) :- %do(insert(?M4.lower.lowerReceiverExtension.buffer,?M4.lower.lowerReceiverExtension),?,?).
+
+@!{InsertBufferRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?buffer^^Buffer, insertedInto -> ?lre^^LowerReceiverExtension ],
+  // Preconditions
+  ?_lower : LowerHalf [ 
+    lowerReceiverExtension -> ?lre [ 
+      buffer -> ?buffer [ 
+        attached -> \false 
+      ]
+    ], 
+    bufferRetainer -> ?buffRetainer [ pressed -> \true ]
+  ],
+  // Effects
+  ?del = [ ${?buffRetainer [ pressed -> \true ]}, ${?buffer [ attached -> \false ]} ],
+  ?add = [ ${?buffRetainer [ pressed -> \false ]}, ${?buffer [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+// -- End of (dis)assembly actions. --- 
+
+// --- Cleaning actions ---
+
+@!{AttachCleaningRodBottomSegmentRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ 
+    (thingAttached -> ?bs^^CleaningRodBottomSegment, attachedTo -> ?ms^^CleaningRodMiddleSegment) ; 
+    (thingAttached -> ?ms^^CleaningRodMiddleSegment, attachedTo -> ?bs^^CleaningRodBottomSegment) 
+  ],
+  // Preconditions
+  ? : CleaningRod [ 
+    cleaningRodBottomSegment -> ?bs [ attached -> \false ], 
+    cleaningRodMiddleSegment -> ?ms 
+  ],
+  // Effects
+  ?del = [ ${?bs [ attached -> \false ]} ], 
+  ?add = [ ${?bs [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{AttachCleaningRodTopSegmentRule}
+%do(?action^^Attach,?del,?add) :-
+  // Action Parameters
+  ?action [ 
+    (thingAttached -> ?ts^^CleaningRodTopSegment, attachedTo -> ?ms^^CleaningRodMiddleSegment) ; 
+    (thingAttached -> ?ms^^CleaningRodMiddleSegment, attachedTo -> ?ts^^CleaningRodTopSegment) 
+  ],
+  // Preconditions
+  ? : CleaningRod [ 
+    cleaningRodTopSegment -> ?ts [ attached -> \false ], 
+    cleaningRodMiddleSegment -> ?ms 
+  ],
+  // Effects
+  ?del = [ ${?ts [ attached -> \false ]} ], 
+  ?add = [ ${?ts [ attached -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+// -- End of cleaning actions --
+
+// --- Operational actions below ---
+
+@!{InsertMagazineHelperRule}
+%insert_magazine(?M4) :- %do(insert(?M4.lower.magazine,?M4.lower),?,?). 
+
+@!{InsertMagazineRule}
+%do(?action^^Insert,?del,?add) :-
+  // Action Parameters
+  ?action [ thingInserted -> ?mag^^Magazine, insertedInto -> ?lower^^LowerHalf ],
+  // Preconditions
+  ?lower [ magazine -> ?mag [ attached -> \false]], 
+  // Effects
+  ?del = [ ${?mag [attached -> \false]} ], 
+  ?add = [ ${?mag [attached -> \true]} ],
+  %kb_update(?del,?add).
+
+
+@!{PushMagazineReleaseButtonHelperRule}
+%push_magazine_release_button(?M4) :- %do(push(?M4.lower.magazineReleaseButton),?,?). 
+
+@!{PushMagazineReleaseButtonRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?mrButton^^MagazineReleaseButton ],
+  // Preconditions
+  ?_lower : LowerHalf [ 
+    magazine -> ?mag,
+    magazineReleaseButton -> ?mrButton
+  ], 
+  // Effects
+  \if (?mag [ attached -> \true ]) \then
+    (?del = [ ${?mag [attached -> \true]} ], 
+     ?add = [ ${?mag [attached -> \false]} ])
+  \else 
+    (?del = [], 
+     ?add = []),
+  %kb_update(?del,?add).
+
+
+@!{SelectSafeHelperRule}
+%select_safe(?M4) :- %do(select_switch_position(?M4.lower.selector,Safe),?,?).
+
+@!{SelectSafeRule}
+%do(?action^^SelectSwitchPosition,?del,?add) :-
+  // Action Parameters
+  ?action [ switch -> ?selector^^Selector, switchPosition -> Safe ],
+  // Preconditions
+  ?_lower [ 
+    selector -> ?selector,
+    hammer -> ? [ cocked -> \true ]  // Change \true to something else to test debugger bug.
+  ],
+  //Effects
+  ?del = [ ${?selector [ switchPosition -> ? ]} ], 
+  ?add = [ ${?selector [ switchPosition -> Safe ]} ],
+  %kb_update(?del,?add).
+
+
+@!{SelectSemiHelperRule}
+%select_semi(?M4) :- %do(select_switch_position(?M4.lower.selector,Semi),?,?).
+
+@!{SelectSemiRule}
+%do(?action^^SelectSwitchPosition,?del,?add) :-
+  // Action Parameters
+  ?action [ switch -> ?selector^^Selector, switchPosition -> Semi ],
+  // Preconditions
+  ?_lower [ selector -> ?selector ],
+  //Effects
+  ?del = [ ${?selector [ switchPosition -> ? ]} ], 
+  ?add = [ ${?selector [ switchPosition -> Semi ]} ],
+  %kb_update(?del,?add).
+
+
+@!{InspectChamberHelperRule}
+%inspect_chamber(?M4) :- %do(inspect(?M4.upper.chamber),?,?).
+
+@!{InspectChamberRule}
+%do(?action^^Inspect,[],[]) :-
+  // Action Parameters
+  ?action [ thingInspected -> ?chamber^^Chamber ],
+  // Preconditions
+  ?M4 [ upper -> ? [
+    chamber -> ?chamber, 
+    boltCarrierGroup -> ? [ boltCarrierGroupState -> ?baState ] 
+  ]],
+  (?baState = BoltHeldBack ; ?baState = BoltLockedBack),
+  weapon_assembled(?M4).  
+  // No effects
+
+
+@!{PushChargingHandleHelperRule}
+%push_charging_handle(?M4) :- %do(push(?M4.upper.boltCarrierGroup.chargingHandle),?,?).
+
+@!{PushChargingHandleRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?chargingHandle^^ChargingHandle ],
+  // Preconditions
+  ?M4 [ 
+    upper -> ? [ 
+      boltCarrierGroup -> ? [ 
+        boltCarrierGroupState -> BoltLockedBack,
+        chargingHandle -> ?chargingHandle
+      ]
+    ]
+  ],
+  weapon_assembled(?M4),  
+  // Effects
+  ?del = [ ${?chargingHandle [ position -> ? ]} ], 
+  ?add = [ ${?chargingHandle [ position -> ChargingHandleForward ]} ],
+  %kb_update(?del,?add).
+
+
+@!{PointWeaponAtTargetHelperRule}
+%point_weapon_at_target(?M4,?Target) :- %do(point(?M4,?Target),?,?).
+
+@!{PointWeaponAtTargetRule}
+%do(?action^^Point,[],[]) :-
+  // Action Parameters
+  ?action [ thingPointed -> ?_M4^^M4, pointedAt -> ?_Target^^SafeTarget ].
+  // No effects
+
+
+// Very similar to release_charging_handle
+@!{PushBoltCatchTopHelperRule}
+%push_bolt_catch_top(?M4) :- %do(push(?M4.lower.boltCatch.boltCatchTop),?,?).
+
+@!{PushBoltCatchTopRule}
+%do(?action^^Push,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?boltCatchTop^^BoltCatchTop ],
+  // Preconditions
+  ?M4 [
+    upper -> ? [ 
+      boltCarrierGroup -> ?boltAss [ 
+        boltCarrierGroupState -> ?baState,
+        chargingHandle -> ?chargingHandle
+      ],
+      chamber -> ?chamber  // we assume the chamber is empty here
+    ],
+    lower -> ?lower [ 
+      boltCatch -> ?boltCatch [
+        boltCatchTop -> ?boltCatchTop 
+      ] 
+    ]
+  ],
+  weapon_assembled(?M4),  
+  // Effects
+  \if (?baState = BoltLockedBack) \then
+    (?del1 = [ ${?boltAss [ boltCarrierGroupState -> BoltLockedBack ]}, 
+               ${?boltCatch [ engaged -> \true ]}, 
+               ${?chargingHandle [ position -> ? ]} ],
+     ?add1 = [ ${?boltCatch [ engaged -> \false ]}, 
+               ${?boltAss [ boltCarrierGroupState -> BoltForward ]}, 
+               ${?chargingHandle [ position -> ChargingHandleForward ]} ], 
+     \if (?lower [ magazine -> ?mag [ attached -> \true, rounds -> [?topround|?rounds]]]) \then
+       (?del = [ ${?mag [ rounds ->  [?topround|?rounds]]}, ${?topround [ location -> ?mag ]} | ?del1 ],
+        ?add = [ ${?mag [ rounds -> ?rounds ]}, ${?topround [ location -> ?chamber ]} | ?add1 ])
+     \else
+       (?del = ?del1, ?add = ?add1)),
+  %kb_update(?del,?add).
+
+
+// TODO: Model the fact that this uses up one hand
+@!{PushAndHoldBoltCatchBottomHelperRule}
+%push_and_hold_bolt_catch_bottom(?M4) :- %do(push_and_hold(?M4.lower.boltCatch.boltCatchBottom),?,?).
+
+@!{PushAndHoldBoltCatchBottomRule}
+%do(?action^^PushAndHold,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPushed -> ?boltCatchBottom^^BoltCatchBottom ],
+  // Preconditions
+  ?_M4 [ lower -> ? [ boltCatch -> ?boltCatch [ boltCatchBottom -> ?boltCatchBottom ]]],
+  // Effects
+  ?del = [ ${?boltCatch [ engaged -> ? ]} ],
+  ?add = [ ${?boltCatch [ engaged -> \true ]} ],
+  %kb_update(?del,?add).
+
+
+@!{ReleaseBoltCatchBottomHelperRule}
+%release_bolt_catch_bottom(?M4) :- %do(release(?M4.lower.boltCatch.boltCatchBottom),?,?).
+
+@!{ReleaseBoltCatchBottomRule}
+%do(?action^^Release,?del,?add) :-
+  // Action Parameters
+  ?action [ thingReleased -> ?boltCatchBottom^^BoltCatchBottom ],
+  // Preconditions
+  ?_M4 [ upper -> ?upper, lower -> ? [ boltCatch -> ?boltCatch [ boltCatchBottom -> ?boltCatchBottom ]]],
+  // Effects
+  \if (\+ ?upper [ boltCarrierGroup -> ? [ boltCarrierGroupState -> BoltLockedBack ]]) \then
+    (?del = [ ${?boltCatch [ engaged -> ? ]} ],
+     ?add = [ ${?boltCatch [ engaged -> \false ]} ])
+  \else
+    (?del = [], ?add = []),
+  %kb_update(?del,?add).
+
+
+// TODO: Model the fact that this uses up one hand
+@!{PullAndHoldChargingHandleHelperRule}
+%pull_and_hold_charging_handle(?M4) :- %do(pull_and_hold(?M4.upper.boltCarrierGroup.chargingHandle),?,?).
+ 
+@!{PullAndHoldChargingHandleRule}
+%do(?action^^PullAndHold,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPulled -> ?chargingHandle^^ChargingHandle ],
+  // Preconditions
+  ?M4 [
+    upper -> ?upper [ 
+      boltCarrierGroup -> ?boltAss [ 
+        chargingHandle -> ?chargingHandle,
+        boltCarrierGroupState -> ?baState 
+      ],
+      chamber -> ?chamber
+    ],
+    lower -> ? [ hammer -> ?hammer ]
+  ],
+  (?baState = BoltForward ; ?baState = BoltLockedBack),
+  weapon_assembled(?M4),  
+  // Effects
+  ?del1 = [ ${?boltAss [ boltCarrierGroupState -> ?baState ]},
+            ${?chargingHandle [ position -> ? ]}, 
+            ${?hammer [ cocked -> ? ]} ],
+  ?add1 = [ ${?boltAss [ boltCarrierGroupState -> BoltHeldBack ]}, 
+            ${?chargingHandle [ position -> ChargingHandleBack ]}, 
+            ${?hammer [ cocked -> \true ]} ], 
+  \if %roundChambered(?upper,?round) \then
+    (?del = [ ${?round [ location -> ?chamber ]} | ?del1 ],   // eject the chambered round if there is one
+     ?add = [ ${?round [ location -> Outside ]} | ?add1 ])
+  \else
+    (?del = ?del1, ?add = ?add1),
+  %kb_update(?del,?add).
+
+
+// This refers to releasing it from a held-back state. See also push_bolt_catch_top, which has a similar effect.
+@!{ReleaseChargingHandleHelperRule}
+%release_charging_handle(?M4) :- %do(release(?M4.upper.boltCarrierGroup.chargingHandle),?,?).
+
+@!{ReleaseChargingHandleRule}
+%do(?action^^Release,?del,?add) :-
+  // Action Parameters
+  ?action [ thingReleased -> ?chargingHandle^^ChargingHandle ],
+  // Preconditions
+  ?M4 [
+    upper -> ? [ 
+      boltCarrierGroup -> ?boltAss [ 
+        chargingHandle -> ?chargingHandle,
+        boltCarrierGroupState -> BoltHeldBack 
+      ],
+      chamber -> ?chamber
+    ],
+    lower -> ?lower [ boltCatch -> ?boltCatch ]
+  ],
+  weapon_assembled(?M4),  
+  // Effects
+  ?del0 = [ ${?boltAss [ boltCarrierGroupState -> BoltHeldBack ]} ],
+  \if (?boltCatch [ engaged -> \true ]) \then
+    (?del = ?del0, ?add = [ ${?boltAss [ boltCarrierGroupState -> BoltLockedBack ]} ])
+  \else 
+    (?del1 = [ ${?chargingHandle [ position -> ? ]} | ?del0 ],
+     ?add1 = [ ${?boltAss [ boltCarrierGroupState -> BoltForward ]}, 
+               ${?chargingHandle [ position -> ChargingHandleForward ]} ],
+     \if (?lower [ magazine -> ?mag [ attached -> \true, rounds -> [?topround|?rounds] ]]) \then
+       (?del = [ ${?mag [ rounds ->  [?topround|?rounds]]}, ${?topround [ location -> ?mag ]} | ?del1 ],
+        ?add = [ ${?mag [ rounds -> ?rounds ]}, ${?topround [ location -> ?chamber ]} | ?add1 ])
+     \else
+       (?del = ?del1, ?add = ?add1)),
+  %kb_update(?del,?add).
+
+
+@!{PullAndHoldTriggerHelperRule}
+%pull_and_hold_trigger(?M4) :- %do(pull_and_hold(?M4.lower.trigger),?,?).
+
+
+@!{PullAndHoldTriggerRule}
+%do(?action^^PullAndHold,?del,?add) :-
+  // Action Parameters
+  ?action [ thingPulled -> ?trigger^^Trigger ],
+  // Preconditions
+  ?M4 [
+    upper -> ?upper [ 
+      boltCarrierGroup -> ?boltAss [ boltCarrierGroupState -> BoltForward ],
+      chamber -> ?chamber
+    ],
+    lower -> ?lower [
+      boltCatch -> ?boltCatch,
+      selector -> ? [ switchPosition -> Semi ], 
+      //selector -> ? [ switchPosition -> ?sp ],
+      hammer -> ?hammer [ cocked -> \true ],
+      trigger -> ?trigger [ pulled -> \false ]
+    ]
+  ],
+  weapon_assembled(?M4),  
+  // Effects
+  ?del0 = [ ${?trigger [ pulled -> \false ]} ],
+  ?add0 = [ ${?trigger [ pulled -> \true ]} ],
+  \if (%roundChambered(?upper,?round), ?round[ casing -> ?casing ]) \then
+    (writeln('WEAPON FIRES!')@\io,
+     // delete all information about the fired round; it's gone
+     ?del1 = [ ${?round : Round}, 
+               ${?round [ location -> ?chamber ]}, 
+               ${?round [ casing -> ?casing ]} | ?del0 ],
+     ?add1 = [ ${?casing [ location -> Outside ]} | ?add0 ],
+     \if (?lower [ magazine -> ?mag [ attached -> \true ]]) \then
+       \if (?mag [ rounds -> [] ]) \then
+         (?del = [ ${?boltCatch [ engaged -> ? ]}, 
+                   ${?boltAss [ boltCarrierGroupState -> BoltForward ]} | ?del1 ],
+          ?add = [ ${?boltCatch [ engaged -> \true ]}, 
+                   ${?boltAss [ boltCarrierGroupState -> BoltLockedBack]} | ?add1 ])
+       \else \if ?mag [ rounds -> [?topround|?rounds]] \then
+         (?del = [ ${?mag [ rounds -> [?topround|?rounds]]}, 
+                   ${?topround [ location -> ?mag ]} | ?del1 ],
+          ?add = [ ${?mag [ rounds -> ?rounds ]}, 
+                   ${?topround [ location -> ?chamber ]} | ?add1 ])
+       \else
+         (?del = ?del1, ?add = ?add1))
+  \else
+    (?del = [ ${?hammer [ cocked -> \true ]} | ?del0 ],
+     ?add = [ ${?hammer [ cocked -> \false ]} | ?add0 ]),
+  %kb_update(?del,?add).
+ 
+ 
+@!{ReleaseTriggerHelperRule}
+%release_trigger(?M4) :- %do(release(?M4.lower.trigger),?,?).
+
+@!{ReleaseTriggerRule}
+%do(?action^^Release,?del,?add) :-
+  // Action Parameters
+  ?action [ thingReleased -> ?trigger^^Trigger ],
+  // Preconditions
+  ?M4 [
+    lower -> ? [
+      hammer -> ? [ cocked -> ?cocked ],
+      trigger -> ?trigger [ pulled -> \true ]
+    ]
+  ],
+  weapon_assembled(?M4),  
+  // Effects
+  \if ?cocked == \true \then 
+    (?del = [ ${?trigger [ pulled -> \true ]} ],
+     ?add = [ ${?trigger [ pulled -> \false ]} ])
+  \else
+    (?del = [], ?add = []),
+  %kb_update(?del,?add).
+     
+
+     
+
+

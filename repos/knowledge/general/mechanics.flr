@@ -1,0 +1,86 @@
+//
+// Copyright 2016 SRI International
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+loaded(mechanics).
+?- \unless loaded(action) \do add{action}.
+
+
+// --- Classes ---
+
+Screw :: PhysicalObject [ description -> "A screw"^^\string ]
+[| 
+  tightened {1..1} => \boolean
+|].
+
+Switch :: PhysicalObject [ description -> "A mechanical switch with two or more possible positions"^^\string ]
+[| 
+  switchPosition {1..1} => SwitchPosition
+|].
+
+Pin :: PhysicalObject [ description -> "A pin"^^\string ]
+[||].
+
+
+// --- Actions ---
+
+PushAndHold :: Action : ActionType [ description -> "Push something and hold it in place (e.g. against spring pressure)"^^\string ]
+[|
+  thingPushed {1..1} => PhysicalObject
+|].
+
+push_and_hold(?_TP) : PushAndHold [ thingPushed -> ?_TP ].
+
+
+PullAndHold :: Action : ActionType [ description -> "Pull something and hold it in place (e.g. against spring pressure)"^^\string ]
+[|
+  thingPulled {1..1} => PhysicalObject
+|].
+
+pull_and_hold(?_TP) : PullAndHold [ thingPulled -> ?_TP ].
+
+
+screwLoosened : ActionParameter [ description -> "The screw loosened"^^\string ].
+
+LoosenScrew :: Action : ActionType [ description -> "Loosen a screw by turning it with or without a screwdriver"^^\string ]
+[|
+  screwLoosened {1..1} => Screw 
+|].
+
+loosen_screw(?_SL) : LoosenScrew [ screwLoosened -> ?_SL ].
+
+
+screwTightened : ActionParameter [ description -> "The screw tightened"^^\string ].
+
+TightenScrew :: Action : ActionType [ description -> ""^^\string ]
+[|
+  screwTightened {1..1} => Screw 
+|].
+
+tighten_screw(?_ST) : TightenScrew [ screwTightened -> ?_ST ].
+
+
+switch : ActionParameter [ description -> "The switch"^^\string ].
+
+switchPosition : ActionParameter [ description -> "The new position of the switch"^^\string ].
+
+SelectSwitchPosition :: Action : ActionType [ description -> "Select the position of a switch"^^\string ] 
+[|
+  switch {1..1} => Switch,
+  switchPosition {1..1} => SwitchPosition  
+|].
+
+select_switch_position(?_SW,?_SP) : SelectSwitchPosition [ switch -> ?_SW, switchPosition -> ?_SP ].
+

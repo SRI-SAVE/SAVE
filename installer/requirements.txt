@@ -1,0 +1,33 @@
+Requirements for the installer
+
+The installer needs to pull data from these repositories:
+
+SAVE (this repository, https://scm.sri.com/scm/git/SAVE/SAVE, branch "master")
+VWF (https://github.com/AddictArts/vwf.git, branch "SAVE/M4")
+XSB (svn://svn.code.sf.net/p/xsb/src/trunk)
+FLORA (svn://svn.code.sf.net/p/flora/src/trunk/flora2)
+TASKLEARNING (https://cmxt.sri.com/svn/tasklearning/branches/training)
+
+After install, contents should include:
+
+* SAVE/repos (data files)
+* SAVE/backend/build/distributions/distzip (the backend Java application)
+* SAVE/LICENSE SAVE.txt
+* VWF (the entire repository)
+* Node.js (From nodejs.org. If we can't bundle this with our
+  installer, it's okay.)
+* XSB/XSB/config/x64-pc-windows/bin (but maybe we need the whole XSB tree)
+* FLORA/something (maybe just the whole FLORA tree)
+* TASKLEARNING/pal-ui/ese/build/distributions/distzip (the ESE)
+* SAVE source code (probably just the entire repository)
+
+(We used to think we needed to install Jetty, but we don't any
+longer.)
+
+We need to exclude build artifacts and repository metadata like .git
+or .svn directories.
+
+We need a way for the user to run the following things:
+* SAVE backend
+* VWF backend
+* ESE

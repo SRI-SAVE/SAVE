@@ -1,0 +1,1 @@
+Test directory for reading/writing of .s3d files.

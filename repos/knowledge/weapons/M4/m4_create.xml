@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<actionModel version="0.1">
+    <type id="Screws">
+        <description>A set of screws</description>
+        <list>
+            <ref typeRef="Screw"/>
+        </list>
+    </type>
+    <type id="PhysicalEntities">
+        <description>A set of physical entities</description>
+        <list>
+            <ref typeRef="PhysicalEntity"/>
+        </list>
+    </type>
+    <type id="FloraClass">
+        <description>A Flora class name</description>
+        <custom>
+            <javaType>java.lang.String</javaType>
+        </custom>
+    </type>
+    <type id="M4Components">
+        <description>An M4's components</description>
+        <struct>
+            <ref name="UpperHalf" typeRef="PhysicalEntity"/>
+            <ref name="BoltCarrierGroup" typeRef="PhysicalEntity"/>
+            <ref name="Bolt" typeRef="PhysicalEntity"/>
+            <ref name="Extractor" typeRef="PhysicalEntity"/>
+            <ref name="ChargingHandle" typeRef="PhysicalEntity"/>
+            <ref name="CarryHandle" typeRef="PhysicalEntity"/>
+            <ref name="SlingLoop" typeRef="PhysicalEntity"/>
+            <ref name="LowerHalf" typeRef="PhysicalEntity"/>
+            <ref name="Magazine" typeRef="PhysicalEntity"/>
+            <ref name="ButtStock" typeRef="PhysicalEntity"/>
+            <ref name="Sling" typeRef="PhysicalEntity"/>
+            <ref name="ExtractorPin" typeRef="PhysicalEntity"/>
+            <ref name="BoltCam" typeRef="PhysicalEntity"/>
+            <ref name="FiringPinRetainingPin" typeRef="PhysicalEntity"/>
+            <ref name="FiringPin" typeRef="PhysicalEntity"/>
+            <ref name="CarryHandleScrew" typeRef="Screws"/>
+            <ref name="Round" typeRef="PhysicalEntities"/>
+            <ref name="Casing" typeRef="PhysicalEntities"/>
+            <ref name="UpperHandGuard" typeRef="PhysicalEntity"/>
+            <ref name="LowerHandGuard" typeRef="PhysicalEntity"/>
+            <ref name="SlipRing" typeRef="PhysicalEntity"/>
+            <ref name="Selector" typeRef="Switch"/>
+            <ref name="MagazineReleaseButton" typeRef="PhysicalEntity"/>
+            <ref name="Hammer" typeRef="PhysicalEntity"/>
+            <ref name="PivotPin" typeRef="PhysicalEntity"/>
+            <ref name="TakedownPin" typeRef="PhysicalEntity"/>
+            <ref name="BoltCatch" typeRef="PhysicalEntity"/>
+            <ref name="SlingSwivel" typeRef="PhysicalEntity"/>
+            <ref name="ButtStockLockLever" typeRef="PhysicalEntity"/>
+            <ref name="LowerReceiverExtension" typeRef="PhysicalEntity"/>
+            <ref name="Buffer" typeRef="PhysicalEntity"/>
+            <ref name="Trigger" typeRef="PhysicalEntity"/>
+            <ref name="BufferRetainer" typeRef="PhysicalEntity"/>
+            <ref name="Chamber" typeRef="PhysicalEntity"/>
+            <ref name="BoltCatchTop" typeRef="PhysicalEntity"/>
+            <ref name="BoltCatchBottom" typeRef="PhysicalEntity"/>
+            <ref name="TakedownPinTail" typeRef="PhysicalEntity"/>
+            <ref name="PivotPinTail" typeRef="PhysicalEntity"/>
+        </struct>
+    </type>
+    <type id="ShootingRangeComponents">
+        <description>A shooting range's components</description>
+        <struct>
+            <ref name="ShootingTarget" typeRef="PhysicalEntity"/>
+        </struct>
+    </type>
+    <action id="CreateM4">
+        <description>Create an object of a given type in the virtual world</description>
+        <metadata value="Create an object" key="name"/>
+        <metadata value="Create M4 instance" key="fancyName"/>
+        <outputParam id="M4">
+            <description>The created M4</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </outputParam>
+        <outputParam id="components">
+            <description>The created object and all of its components</description>
+            <typeRef typeId="M4Components"/>
+        </outputParam>
+    </action>
+    <action id="CreateShootingRange">
+        <description>Create an object of a given type in the virtual world</description>
+        <metadata key="name" value="Create an object"/>
+        <metadata key="fancyName" value="Create a Shooting Range instance"/>
+        <outputParam id="ShootingRange">
+            <description>The created Shooting Range</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </outputParam>
+        <outputParam id="components">
+            <description>The created object and all of its components</description>
+            <typeRef typeId="ShootingRangeComponents"/>
+        </outputParam>
+    </action>
+</actionModel>

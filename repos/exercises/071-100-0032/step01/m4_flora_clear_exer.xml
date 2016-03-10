@@ -1,0 +1,440 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<exercise id="M4 Clear (Flora)">
+
+  <name>M4 Clearing Task (Flora)</name>
+  <description>Clear an M4 in preparation for disassembly.</description>
+  <datafile>../../../s3d/weapons/M4/M4.s3d</datafile>
+  <datafile auto="true">../../../s3d/environments/range/ShootingRange.s3d</datafile>
+  <action_model>../../../knowledge/weapons/M4/m4.xml</action_model>
+  <html>The purpose of this exercise is to practice clearing an M4.</html>
+
+  <problem>
+    <task id='task-1'>
+      <name>Exercise</name>
+      <html>Clear your weapon.</html>
+    </task>
+  </problem>
+
+  <solution>
+    <task_solution task='task-1'>
+      <option>
+
+        <step id='create-00'>
+          <atom functor='m4^0.1^CreateShootingRange'>
+            <parameter id='sr-00' accessor='ShootingRange' />
+            <parameter id='comp-00' accessor='components'>
+              <sub_param id="comp-00-sr" accessor="ShootingTarget"/>
+	    </parameter>
+	  </atom>
+	</step>
+
+        <step id='create-0'>
+          <atom functor='m4^0.1^CreateM4'>
+            <parameter id='m4-1' accessor='M4' />
+            <parameter id='created-1' accessor='components'>
+              <sub_param id="created-1-uh" accessor="UpperHalf"/>
+              <sub_param id="created-1-bcg" accessor="BoltCarrierGroup"/>
+              <sub_param id="created-1-b" accessor="Bolt"/>
+              <sub_param id="created-1-e" accessor="Extractor"/>
+              <sub_param id="created-1-chh" accessor="ChargingHandle"/>
+              <sub_param id="created-1-ch" accessor="CarryHandle"/>
+              <sub_param id="created-1-sl" accessor="SlingLoop"/>
+              <sub_param id="created-1-lh" accessor="LowerHalf"/>
+              <sub_param id="created-1-m" accessor="Magazine"/>
+              <sub_param id="created-1-bs" accessor="ButtStock"/>
+              <sub_param id="created-1-s" accessor="Sling"/>
+              <sub_param id="created-1-ep" accessor="ExtractorPin"/>
+              <sub_param id="created-1-bc" accessor="BoltCam"/>
+              <sub_param id="created-1-fprp" accessor="FiringPinRetainingPin"/>
+              <sub_param id="created-1-fp" accessor="FiringPin"/>
+              <sub_param id="created-1-chs" accessor="CarryHandleScrew"/>
+              <sub_param id="created-1-r" accessor="Round"/>
+              <sub_param id="created-1-c" accessor="Casing"/>
+              <sub_param id="created-1-uhg" accessor="UpperHandGuard"/>
+              <sub_param id="created-1-lhg" accessor="LowerHandGuard"/>
+              <sub_param id="created-1-sr" accessor="SlipRing"/>
+              <sub_param id="created-1-sel" accessor="Selector"/>
+              <sub_param id="created-1-mrb" accessor="MagazineReleaseButton"/>
+              <sub_param id="created-1-h" accessor="Hammer"/>
+              <sub_param id="created-1-pp" accessor="PivotPin"/>
+              <sub_param id="created-1-tp" accessor="TakedownPin"/>
+              <sub_param id="created-1-bc" accessor="BoltCatch"/>
+              <sub_param id="created-1-ss" accessor="SlingSwivel"/>
+              <sub_param id="created-1-bsll" accessor="ButtStockLockLever"/>
+              <sub_param id="created-1-lre" accessor="LowerReceiverExtension"/>
+              <sub_param id="created-1-bf" accessor="Buffer"/>
+              <sub_param id="created-1-t" accessor="Trigger"/>
+              <sub_param id="created-1-br" accessor="BufferRetainer"/>
+              <sub_param id="created-1-ch" accessor="Chamber"/>
+              <sub_param id="created-1-bct" accessor="BoltCatchTop"/>
+              <sub_param id="created-1-bcb" accessor="BoltCatchBottom"/>
+              <sub_param id="created-1-tpt" accessor="TakedownPinTail"/>
+              <sub_param id="created-1-ppt" accessor="PivotPinTail"/>
+            </parameter>
+          </atom>
+        </step>
+
+        <step id='point-1'>
+          <atom functor='m4^0.1^Point'>
+            <parameter id='pw1-obj1' accessor='thingPointed' />
+            <parameter id='pw1-obj2' accessor='pointedAt' />
+          </atom>
+        </step>
+
+        <step id='select-2'>
+          <atom functor='m4^0.1^SelectSwitchPosition'>
+            <parameter id='sm2-obj' accessor='switch' />
+            <parameter id='sm2-mode' accessor='switchPosition' />
+          </atom>
+        </step>
+
+        <step id='push-3'>
+          <atom functor='m4^0.1^Push'>
+            <parameter id='pmr3-obj' accessor='thingPushed' />
+          </atom>
+        </step>
+
+        <step id='pull-and-hold-4'>
+          <atom functor='m4^0.1^PullAndHold'>
+            <parameter id='phc4-obj' accessor='thingPulled' />
+          </atom>
+        </step>
+
+        <step id='push-and-hold-5'>
+          <atom functor='m4^0.1^PushAndHold'>
+            <parameter id='phb5-obj' accessor='thingPushed' />
+          </atom>
+        </step>
+
+        <step id='release-6'>
+          <atom functor='m4^0.1^Release'>
+            <parameter id='rc6-obj' accessor='thingReleased' />
+          </atom>
+        </step>
+
+        <step id='release-7'>
+          <atom functor='m4^0.1^Release'>
+            <parameter id='rb7-obj' accessor='thingReleased' />
+          </atom>
+        </step>
+
+        <step id='push-8'>
+          <atom functor='m4^0.1^Push'>
+            <parameter id='pcf8-obj' accessor='thingPushed' />
+          </atom>
+        </step>
+
+        <step id='inspect-9'>
+          <atom functor='m4^0.1^Inspect'>
+            <parameter id='cc9-obj' accessor='thingInspected' />
+          </atom>
+        </step>
+
+        <step id='select-10'>
+          <atom functor='m4^0.1^SelectSwitchPosition'>
+            <parameter id='sm10-obj' accessor='switch' />
+            <parameter id='sm10-mode' accessor='switchPosition' />
+          </atom>
+        </step>
+
+        <step id='push-11'>
+          <atom functor='m4^0.1^Push'>
+            <parameter id='pb11-obj' accessor='thingPushed' />
+          </atom>
+        </step>
+
+        <step id='select-12'>
+          <atom functor='m4^0.1^SelectSwitchPosition'>
+            <parameter id='sm12-obj' accessor='switch' />
+            <parameter id='sm12-mode' accessor='switchPosition' />
+          </atom>
+        </step>
+
+        <step id='pull-13'>
+          <atom functor='m4^0.1^Pull'>
+            <parameter id='st13-obj' accessor='thingPulled' />
+          </atom>
+        </step>
+
+        <step id='pull-and-hold-14'>
+          <atom functor='m4^0.1^PullAndHold'>
+            <parameter id='phc14-obj' accessor='thingPulled' />
+          </atom>
+        </step>
+
+        <step id='release-15'>
+          <atom functor='m4^0.1^Release'>
+            <parameter id='rc15-obj' accessor='thingReleased' />
+          </atom>
+        </step>
+
+        <step id='select-16'>
+          <atom functor='m4^0.1^SelectSwitchPosition'>
+            <parameter id='sm16-obj' accessor='switch' />
+            <parameter id='sm16-mode' accessor='switchPosition' />
+          </atom>
+        </step>
+
+        <equality_constraint>
+          <parameter>m4-1</parameter>
+          <parameter>pw1-obj1</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>comp-00-sr</parameter>
+          <parameter>pw1-obj2</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-sel</parameter>
+          <parameter>sm2-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-mrb</parameter>
+          <parameter>pmr3-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-chh</parameter>
+          <parameter>phc4-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-bcb</parameter>
+          <parameter>phb5-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-chh</parameter>
+          <parameter>rc6-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-bcb</parameter>
+          <parameter>rb7-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-chh</parameter>
+          <parameter>pcf8-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-ch</parameter>
+          <parameter>cc9-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-sel</parameter>
+          <parameter>sm10-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-bct</parameter>
+          <parameter>pb11-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-sel</parameter>
+          <parameter>sm12-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-t</parameter>
+          <parameter>st13-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-chh</parameter>
+          <parameter>phc14-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-chh</parameter>
+          <parameter>rc15-obj</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-1-sel</parameter>
+          <parameter>sm16-obj</parameter>
+        </equality_constraint>
+
+        <ordering_constraint
+            predecessor="create-00"
+            />
+
+        <ordering_constraint
+            predecessor="point-1"
+            successor="select-2"
+            />
+
+        <ordering_constraint
+            predecessor="point-1"
+            successor="push-3"
+            />
+
+        <ordering_constraint
+            predecessor="select-2"
+            successor="select-10"
+            />
+
+        <ordering_constraint
+            predecessor="push-3"
+            successor="pull-and-hold-4"
+            />
+
+        <ordering_constraint
+            predecessor="push-3"
+            successor="pull-13"
+            />
+
+        <ordering_constraint
+            predecessor="pull-and-hold-4"
+            successor="push-and-hold-5"
+            />
+
+        <ordering_constraint
+            predecessor="pull-and-hold-4"
+            successor="release-6"
+            />
+
+        <ordering_constraint
+            predecessor="pull-and-hold-4"
+            successor="pull-and-hold-14"
+            />
+
+        <ordering_constraint
+            predecessor="push-and-hold-5"
+            successor="release-6"
+            />
+
+        <ordering_constraint
+            predecessor="push-and-hold-5"
+            successor="release-7"
+            />
+
+        <ordering_constraint
+            predecessor="release-6"
+            successor="release-7"
+            />
+
+        <ordering_constraint
+            predecessor="release-6"
+            successor="push-8"
+            />
+
+        <ordering_constraint
+            predecessor="release-7"
+            successor="release-15"
+            />
+
+        <ordering_constraint
+            predecessor="release-7"
+            successor="push-11"
+            />
+
+        <ordering_constraint
+            predecessor="push-8"
+            successor="inspect-9"
+            />
+
+        <ordering_constraint
+            predecessor="select-10"
+            successor="select-12"
+            />
+
+        <ordering_constraint
+            predecessor="select-10"
+            successor="push-11"
+            />
+
+        <ordering_constraint
+            predecessor="push-11"
+            successor="pull-13"
+            />
+
+        <ordering_constraint
+            predecessor="select-12"
+            successor="pull-13"
+            />
+
+        <ordering_constraint
+            predecessor="select-12"
+            successor="select-16"
+            />
+
+        <ordering_constraint
+            predecessor="pull-and-hold-14"
+            successor="release-15"
+            />
+
+        <ordering_constraint
+            successor="select-16"
+            />
+
+<!-- 
+        <value_constraint>
+          <parameter>pw1-obj2</parameter>
+          <value>
+            <ctrs>"ShootingBerm"</ctrs>
+            <type>m4^0.1^PhysicalEntity</type>
+          </value>
+        </value_constraint>
+ -->
+ 
+        <value_constraint>
+          <parameter>sm2-mode</parameter>
+          <value>
+            <ctrs>"Safe"</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+          </value>
+        </value_constraint>
+
+        <value_constraint>
+          <parameter>sm10-mode</parameter>
+          <value>
+            <ctrs>"Safe"</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+          </value>
+        </value_constraint>
+
+        <value_constraint>
+          <parameter>sm12-mode</parameter>
+          <value>
+            <ctrs>"Semi"</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+          </value>
+        </value_constraint>
+
+        <value_constraint>
+          <parameter>sm16-mode</parameter>
+          <value>
+            <ctrs>"Safe"</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+          </value>
+        </value_constraint>
+
+      </option>
+    </task_solution>
+  </solution>
+
+  <success_html>You have successfully cleared your weapon!</success_html>
+
+</exercise>

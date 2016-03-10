@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="S3D" type="S3DType"/>
+
+    <xs:complexType name="S3DType">
+        <xs:sequence>
+            <xs:element name="head" type="HeadType"/>
+            <xs:element name="flora_base" type="FloraBaseType" maxOccurs="unbounded"/>
+            <xs:element name="semantic_mapping" type="SemanticMappingType"/>
+            <xs:element name="grouping" type="HierGroupType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HeadType">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="author" type="xs:string" minOccurs="0"/>
+            <xs:element name="created" type="xs:string" minOccurs="0"/>
+            <xs:element name="modified" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="FloraBaseType">
+        <xs:attribute use="required" name="id" type="xs:string"/>
+        <xs:attribute use="required" name="uri" type="xs:anyURI"/>
+    </xs:complexType>
+
+    <xs:complexType name="SemanticMappingType">
+        <xs:sequence>
+            <xs:element name="asset" type="AssetType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AssetType">
+        <xs:sequence>
+            <xs:element name="group" type="AssetGroupType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="object" type="AssetObjType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute use="required" name="name"/>
+        <xs:attribute use="required" name="uri"/>
+        <xs:attribute use="required" name="sid"/>
+        <xs:attribute use="required" name="flora_ref"/>
+    </xs:complexType>
+
+    <xs:complexType name="AssetGroupType">
+        <xs:attribute use="required" name="name" type="xs:string"/>
+        <xs:attribute use="optional" name="node" type="xs:string"/>
+        <xs:attribute use="required" name="sid" type="xs:string"/>
+        <xs:attribute use="required" name="flora_ref" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="AssetObjType">
+        <xs:attribute use="required" name="name" type="xs:string"/>
+        <xs:attribute use="required" name="node" type="xs:string"/>
+        <xs:attribute use="required" name="sid" type="xs:string"/>
+        <xs:attribute use="required" name="flora_ref" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="HierGroupType">
+        <xs:sequence>
+            <xs:element name="part" type="HierPartType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="group" type="HierGroupType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute use="required" name="name"/>
+        <xs:attribute use="optional" name="node"/>
+    </xs:complexType>
+
+    <xs:complexType name="HierPartType">
+        <xs:attribute use="required" name="node"/>
+    </xs:complexType>
+</xs:schema>

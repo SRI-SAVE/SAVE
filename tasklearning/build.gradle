@@ -1,0 +1,67 @@
+/*
+ * Copyright 2016 SRI International
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// This build file runs a build in the tasklearning tree and exports
+// those libraries into this tree's libs directory.
+
+task clean(type: GradleBuild) {
+    dir = file(tlRoot)
+    tasks = ["clean"]
+}
+
+task 'import'(type: GradleBuild) {
+    dir = file(tlRoot)
+    tasks = ["uploadArchives"]
+
+    // Import artifacts.
+    doLast {
+        def extArtDir = file("$tlRoot/dist/maven")
+        def intArtDir = file("$rootDir/libs")
+        // Now collect artifacts from extArtDir into intArtDir.
+        def intPoms = fileTree(intArtDir) {
+            include '**/*.pom'
+        }
+        // For each pom, find the grandparent directory, relative
+        // to the artifact directory. Use that relative path to do
+        // a copy.
+        intPoms.each { File pom ->
+            def gpdir = pom.parentFile.parentFile.canonicalPath
+            def base = intArtDir.canonicalPath
+            if (gpdir.startsWith(base)) {
+                def relpath = gpdir.substring(base.size())
+                if (relpath.startsWith(File.separator)) {
+                    relpath = relpath.substring(1)
+                }
+                copy {
+                    from extArtDir
+                    into intArtDir
+                    include "$relpath/**"
+                }
+                // Delete other versions of this artifact from intArtDir.
+                def srcDir = file("$extArtDir/$relpath")
+                def dstDir = file("$intArtDir/$relpath")
+                dstDir.listFiles().each { File dstFile ->
+                    def srcFile = file("$srcDir/${dstFile.name}")
+                    if (srcFile.parentFile.exists() && !srcFile.exists()) {
+                        delete(dstFile)
+                    }
+                }
+            } else {
+                throw new GradleException("$file isn't in $base")
+            }
+        }
+    }
+}

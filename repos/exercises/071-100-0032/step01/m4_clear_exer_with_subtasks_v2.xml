@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<exercise id="M4 Clear Subtasks v2">
+
+  <name>M4 Clearing Task with Subtasks v2</name>
+  <description>Clear an M4 in preparation for disassembly.</description>
+  <html>The purpose of this exercise is to practice clearing an M4.</html>
+
+  <problem>
+    <task id='task-1'>
+      <name>Exercise</name>
+      <html>Clear your weapon.</html>
+      <sub_task id="subtask-1">
+      	<prompt>Prep your weapon</prompt>
+      </sub_task>
+      <sub_task id="subtask-3">
+      	<prompt>Ensure that the chamber is clear</prompt>
+      </sub_task>
+      <sub_task id="subtask-5">
+      	<prompt>Put your weapon in safe mode</prompt>
+      </sub_task>
+    </task>
+  </problem>
+
+  <solution>
+    <task_solution task='task-1'>
+      <option>
+        <step id='point-weapon-1' subtask='subtask-1'>
+          <atom functor='m4_am^0.1^PointWeaponInSafeDirection'>
+            <parameter id='pw1-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='select-mode-2' subtask='subtask-1'>
+          <atom functor='m4_am^0.1^SelectMode'>
+            <parameter id='sm2-m4' accessor='m4' />
+            <parameter id='sm2-mode' accessor='selectorMode' />
+          </atom>
+        </step>
+
+        <step id='push-magazine-release-3' subtask='subtask-1'>
+          <atom functor='m4_am^0.1^PushMagazineReleaseButton'>
+            <parameter id='pm3-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='pull-and-hold-charging-handle-4' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^PullAndHoldChargingHandle'>
+            <parameter id='phc4-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='push-and-hold-bolt-catch-bottom-5' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^PushAndHoldBoltCatchBottom'>
+            <parameter id='phb5-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='release-charging-handle-6' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^ReleaseChargingHandle'>
+            <parameter id='rc6-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='let-go-of-bolt-catch-bottom-7' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^LetGoOfBoltCatchBottom'>
+            <parameter id='rb7-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='push-charging-handle-forward-8' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^PushChargingHandleForward'>
+            <parameter id='pcf8-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='check-chamber-9' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^CheckChamberAndReceiverForAmmo'>
+            <parameter id='cc9-m4' accessor='m4' />
+          </atom>
+        </step>
+
+		<step id='select-mode-10' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^SelectMode'>
+            <parameter id='sm10-m4' accessor='m4' />
+            <parameter id='sm10-mode' accessor='selectorMode' />
+          </atom>
+        </step>        
+
+        <step id='push-bolt-catch-top-11' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^PushBoltCatchTop'>
+            <parameter id='pb11-m4' accessor='m4' />
+          </atom>
+        </step>
+
+        <step id='select-mode-12' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^SelectMode'>
+            <parameter id='sm12-m4' accessor='m4' />
+            <parameter id='sm12-mode' accessor='selectorMode' />
+          </atom>
+        </step>        
+
+        <step id='pull-trigger-13' subtask='subtask-3'>
+          <atom functor='m4_am^0.1^PullTrigger'>
+            <parameter id='st13-m4' accessor='m4' />
+          </atom>
+        </step>        
+
+        <step id='pull-and-hold-charging-handle-14' subtask='subtask-5'>
+          <atom functor='m4_am^0.1^PullAndHoldChargingHandle'>
+            <parameter id='phc14-m4' accessor='m4' />
+          </atom>
+        </step>        
+
+        <step id='release-charging-handle-15' subtask='subtask-5'>
+          <atom functor='m4_am^0.1^ReleaseChargingHandle'>
+            <parameter id='rc15-m4' accessor='m4' />
+          </atom>
+        </step>        
+
+        <step id='select-mode-16' subtask='subtask-5'>
+          <atom functor='m4_am^0.1^SelectMode'>
+            <parameter id='sm16-m4' accessor='m4' />
+            <parameter id='sm16-mode' accessor='selectorMode' />
+          </atom>
+        </step>        
+
+        <ordering_constraint predecessor="point-weapon-1">
+            <reason>to ensure that firing the weapon will not be harmful</reason>
+        </ordering_constraint>
+
+        <ordering_constraint
+            predecessor="select-mode-2"
+            successor="select-mode-10"
+        />
+
+        <ordering_constraint predecessor="push-magazine-release-3" successor="pull-and-hold-charging-handle-4">
+        	<reason>to ensure that charging the weapon will not chamber a round</reason>
+        </ordering_constraint>
+
+        <ordering_constraint predecessor="push-magazine-release-3" successor="pull-trigger-13">
+            <reason>to ensure that the weapon will not fire a round</reason>
+        </ordering_constraint>
+
+        <ordering_constraint predecessor="pull-and-hold-charging-handle-4" successor="push-and-hold-bolt-catch-bottom-5">
+        	<reason>to open the chamber</reason>
+        </ordering_constraint>
+
+		<ordering_constraint
+			predecessor="pull-and-hold-charging-handle-4"
+			successor="pull-and-hold-charging-handle-14"
+		/>
+		
+        <ordering_constraint predecessor="release-charging-handle-6" successor="let-go-of-bolt-catch-bottom-7">
+        	<reason>to keep the chamber open</reason>
+        </ordering_constraint>
+
+		<ordering_constraint
+            predecessor="release-charging-handle-6"
+            successor="release-charging-handle-15"
+        />
+
+        <ordering_constraint
+            predecessor="select-mode-10"
+            successor="select-mode-12"
+        />
+
+        <ordering_constraint predecessor="select-mode-12" successor="pull-trigger-13">
+        	<reason>to ensure that any chambered round will be discharged</reason>
+        </ordering_constraint>
+
+        <ordering_constraint
+            predecessor="select-mode-12"
+            successor="select-mode-16"
+        />
+
+        <ordering_constraint
+            successor="select-mode-16"
+        />
+
+        <value_constraint>
+          <parameter>sm2-mode</parameter>
+          <value>
+            <ctrs>"Safe"</ctrs>
+            <type>m4_am^0.1^SelectorMode</type>
+          </value>
+        </value_constraint>
+
+		<value_constraint>
+          <parameter>sm10-mode</parameter>
+          <value>
+            <ctrs>"Safe"</ctrs>
+            <type>m4_am^0.1^SelectorMode</type>
+          </value>
+        </value_constraint>
+
+        <value_constraint>
+          <parameter>sm12-mode</parameter>
+          <value>
+            <ctrs>"Semi"</ctrs>
+            <type>m4_am^0.1^SelectorMode</type>
+          </value>
+          <reason>to fire the weapon and double-check that the chamber is clear</reason>
+        </value_constraint>
+
+        <value_constraint>
+          <parameter>sm16-mode</parameter>
+          <value>
+            <ctrs>"Safe"</ctrs>
+            <type>m4_am^0.1^SelectorMode</type>
+          </value>
+          <reason>to prevent unintentional firing during subsequent disassembly</reason>
+        </value_constraint>
+
+      </option>
+    </task_solution>
+  </solution>
+
+  <success_html>You have successfully cleared your weapon!</success_html>
+
+</exercise>
+

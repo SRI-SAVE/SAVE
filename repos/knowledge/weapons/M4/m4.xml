@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<actionModel version="0.1">
+    <require url="m4_types.xml"/>
+    <require url="m4_create.xml"/>
+    <action id="Attach">
+        <description>Attach an object to another object</description>
+        <metadata value="Attach an object to another object" key="name"/>
+        <metadata value="Attach ,#thingAttached, to ,#attachedTo" key="fancyName"/>
+        <inputParam id="thingAttached">
+            <description>The thing being attached</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+        <inputParam id="attachedTo">
+            <description>The thing that an object is being attached to</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Close">
+        <description>Close an object</description>
+        <metadata value="Close an object" key="name"/>
+        <metadata value="Close ,#thingClosed" key="fancyName"/>
+        <inputParam id="thingClosed">
+            <description>The object being closed</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Detach">
+        <description>Detach an object from another object</description>
+        <metadata value="Detach an object from another object" key="name"/>
+        <metadata value="Detach ,#thingDetached, from ,#detachedFrom" key="fancyName"/>
+        <inputParam id="thingDetached">
+            <description>The thing being detached</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+        <inputParam id="detachedFrom">
+            <description>The thing that an object is being detached from</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Extract">
+        <description>Extract an object from another object</description>
+        <metadata value="Extract an object from another object" key="name"/>
+        <metadata value="Extract ,#thingExtracted, from ,#extractedFrom" key="fancyName"/>
+        <inputParam id="thingExtracted">
+            <description>The object being extracted</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+        <inputParam id="extractedFrom">
+            <description>Where the object is being extracted from</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Insert">
+        <description>Insert an object into another object</description>
+        <metadata value="Insert an object into another object" key="name"/>
+        <metadata value="Insert ,#thingInserted, into another ,#insertedInto," key="fancyName"/>
+        <inputParam id="thingInserted">
+            <description>The object being inserted</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+        <inputParam id="insertedInto">
+            <description>Where the object is being inserted</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Inspect">
+        <description>Inspect something</description>
+        <metadata value="Inspect something" key="name"/>
+        <metadata value="Inspect ,#thingInspected" key="fancyName"/>
+        <inputParam id="thingInspected">
+            <description>The thing inspected</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Lift">
+        <description>Lift an object</description>
+        <metadata value="Lift an object" key="name"/>
+        <metadata value="Lift ,#thingLifted" key="fancyName"/>
+        <inputParam id="thingLifted">
+            <description>The object being lifted</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="LoosenScrew">
+        <description>Loosen a screw by turning it with or without a screwdriver</description>
+        <metadata value="Loosen a screw by turning it with or without a screwdriver" key="name"/>
+        <metadata value="Loosen ,#screwLoosened, by turning it with or without a screwdriver" key="fancyName"/>
+        <inputParam id="screwLoosened">
+            <description>The screw loosened</description>
+            <typeRef typeId="Screw"/>
+        </inputParam>
+    </action>
+    <action id="Open">
+        <description>Open an object</description>
+        <metadata value="Open an object" key="name"/>
+        <metadata value="Open ,#thingOpened" key="fancyName"/>
+        <inputParam id="thingOpened">
+            <description>The object being opened</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Point">
+        <description>Point an object at another object</description>
+        <metadata value="Point an object at another object" key="name"/>
+        <metadata value="Point ,#thingPointed, at ,#pointedAt" key="fancyName"/>
+        <inputParam id="thingPointed">
+            <description>The thing pointed</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+        <inputParam id="pointedAt">
+            <description>The thing pointed at</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Press">
+        <description>Press an object</description>
+        <metadata value="Press an object" key="name"/>
+        <metadata value="Press ,#thingPressed" key="fancyName"/>
+        <inputParam id="thingPressed">
+            <description>The object being pressed</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Pull">
+        <description>Pull an object</description>
+        <metadata value="Pull an object" key="name"/>
+        <metadata value="Pull ,#thingPulled," key="fancyName"/>
+        <inputParam id="thingPulled">
+            <description>The object being pulled</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="PullAndHold">
+        <description>Pull something and hold it in place (e.g. against spring pressure)</description>
+        <metadata value="Pull something and hold it in place (e.g. against spring pressure)" key="name"/>
+        <metadata value="Pull ,#thingPulled, and hold it in place" key="fancyName"/>
+        <inputParam id="thingPulled">
+            <description>The object being pulled</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Push">
+        <description>Push an object</description>
+        <metadata value="Push an object" key="name"/>
+        <metadata value="Push ,#thingPushed" key="fancyName"/>
+        <inputParam id="thingPushed">
+            <description>The object being pushed</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="PushAndHold">
+        <description>Push something and hold it in place (e.g. against spring pressure)</description>
+        <metadata value="Push something and hold it in place (e.g. against spring pressure)" key="name"/>
+        <metadata value="Push ,#thingPushed, and hold it in place" key="fancyName"/>
+        <inputParam id="thingPushed">
+            <description>The object being pushed</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="Release">
+        <description>Release an object that is being held</description>
+        <metadata value="Release an object that is being held" key="name"/>
+        <metadata value="Release ,#thingReleased" key="fancyName"/>
+        <inputParam id="thingReleased">
+            <description>The object being released</description>
+            <typeRef typeId="PhysicalEntity"/>
+        </inputParam>
+    </action>
+    <action id="SelectSwitchPosition">
+        <description>Select the position of a switch</description>
+        <metadata value="Select the position of a switch" key="name"/>
+        <metadata value="Set the position of ,#switch, to ,#switchPosition" key="fancyName"/>
+        <inputParam id="switch">
+            <description>The switch</description>
+            <typeRef typeId="Switch"/>
+        </inputParam>
+        <inputParam id="switchPosition">
+            <description>The new position of the switch</description>
+            <typeRef typeId="SwitchPosition"/>
+        </inputParam>
+    </action>
+    <action id="TightenScrew">
+        <description>Tighten a screw by turning it with or without a screwdriver</description>
+        <metadata value="Tighten a screw by turning it with or without a screwdriver" key="name"/>
+        <metadata value="Tighten ,#screwTightened," key="fancyName"/>
+        <inputParam id="screwTightened">
+            <description>The screw tightened</description>
+            <typeRef typeId="Screw"/>
+        </inputParam>
+    </action>
+</actionModel>

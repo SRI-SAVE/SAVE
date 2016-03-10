@@ -1,0 +1,48 @@
+{
+  "id": "ff808181-49cb-628b-014a-316d6c7e3ff4",
+  "actor": {
+    "objectType": "Agent",
+    "name": "jobs",
+    "mbox": "mailto:jobs@perls.com"
+  },
+  "verb": {
+    "id": "http://adlnet.gov/expapi/verbs/completed",
+    "display": {
+      "en-US": "completed"
+    }
+  },
+  "object": {
+    "objectType": "Activity",
+    "id": "http://perls.sri.com:8000/perls-test/learningobjects?loId=ff808181449c182f00009f642af920a8",
+    "definition": {
+      "name": {
+        "en-US": "M4 Clearing Exercise"
+      },
+      "description": {
+        "en-US": "Exercise in maintenance of the M4 Series Weapon."
+      },
+      "type": "http://adlnet.gov/expapi/activities/simulation",
+      "extensions": {
+        "http://semantic3d.com:3000/profiles/exercises/extensions/saveexercise": {
+          "id": "http://semantic3d.com:3000/SAVEM4/Clearing/"
+        }
+      }
+    }
+  },
+  "result": {
+    "success": true,
+    "completion": true
+  },
+  "context": {
+    "registration": "ec531277-b57b-4c15-8d91-d292c5b2b8f7",
+    "platform": "SAVE"
+  },
+  "authority": {
+    "objectType": "Agent",
+    "account": {
+      "homePage": "http://perls.sri.com:8000/perls-test/secure/users/sri_save",
+      "name": "sri_save"
+    }
+  },
+  "timestamp": "2014-12-10T05:32:34.804Z"
+}

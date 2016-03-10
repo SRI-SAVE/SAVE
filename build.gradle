@@ -1,0 +1,100 @@
+description = "SAVE root"
+
+/*
+ * Copyright 2016 SRI International
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// These must be applied at the top level if they're going to be used
+// in any sub-projects:
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'sonar-runner'
+
+// Set up repositories to pull dependencies from.
+allprojects {
+    repositories {
+        maven { url "$rootDir/libs" }
+
+        mavenCentral()
+    }
+}
+
+// Assign release, build, and revision. Release is the major version
+// number of the software, set by hand. Build is assigned by
+// Jenkins. Revision is read from version control.
+project.ext.release = '1.0'
+project.ext.build = System.env.BUILD_NUMBER
+if (build == null) {
+    project.ext.build = 'dev'
+}
+def stdout = new ByteArrayOutputStream()
+import org.gradle.process.internal.ExecException
+try {
+    exec {
+        executable = 'git'
+        args = [ 'rev-parse', 'HEAD' ]
+        standardOutput = stdout
+        ignoreExitValue = true
+    }
+} catch(ExecException e) {
+    println(e)
+}
+project.ext.revision = stdout.toString().trim()
+revision = revision.replaceAll("[+]", "")
+if (revision == "") {
+    println("WARNING! Unable to determine revision number")
+    revision = 'unknown'
+}
+// Get the branch of the repository.
+stdout.reset()
+try {
+    exec {
+        executable = "git"
+        args = [ "symbolic-ref", "-q", "HEAD" ]
+        standardOutput = stdout
+        ignoreExitValue = true
+    }
+} catch(ExecException e) {
+    println(e)
+}
+project.ext.branch = stdout.toString().replaceFirst("^refs/heads/", "").trim()
+if (branch == "") {
+    println("WARNING! Unable to determine branch")
+    project.ext.branch = "unknown"
+}
+version = "$release.$build"
+println("version: '$version', branch: '$branch'")
+
+// Configure Sonar.
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "https://sonar.cse.sri.com/"
+        property "sonar.analysis.mode", "preview" // analysis, preview, incremental
+        property "sonar.projectKey", "SAVE"
+        property "sonar.branch", "$branch"
+        property "sonar.login", "sonar_save"
+        property "sonar.password", "4e99yCE52y^BNkA"
+    }
+}
+
+// Set the default task for all projects.
+allprojects {
+    defaultTasks = ["assemble"]
+}
+
+// Script to flag unused jar files.
+apply from: "$rootDir/gradle/scripts/unusedJars.gradle"

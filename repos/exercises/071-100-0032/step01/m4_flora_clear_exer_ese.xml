@@ -1,0 +1,315 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<exercise id="M4 Clear (Flora) ESE">
+
+  <name>M4 Clearing Task (Flora) ESE</name>
+  <description>Clear an M4 in preparation for disassembly.</description>
+  <datafile>../../../s3d/weapons/M4/M4.s3d</datafile>
+  <datafile auto="true">../../../s3d/environments/range/ShootingRange.s3d</datafile>
+  <action_model>../../../knowledge/weapons/M4/m4.xml</action_model>
+  <html>The purpose of this exercise is to practice clearing an M4.</html>
+
+  <problem>
+    <task id="task-1">
+      <name>Exercise</name>
+      <html>Clear your weapon.</html>
+    </task>
+  </problem>
+
+  <solution>
+    <task_solution task="task-1">
+<option>
+    <demonstration>[
+  m4^0.1^CreateM4( M4_1 [[ UpperHalf BoltCarrierGroup Bolt Extractor ChargingHandle CarryHandle SlingLoop LowerHalf Magazine ButtStock Sling ExtractorPin BoltCam FiringPinRetainingPin FiringPin CarryHandleScrew Round Casing UpperHandGuard LowerHandGuard SlipRing Selector MagazineReleaseButton Hammer PivotPin TakedownPin BoltCatch SlingSwivel ButtStockLockLever LowerReceiverExtension Buffer Trigger BufferRetainer Chamber BoltCatchTop BoltCatchBottom TakedownPinTail PivotPinTail ] [ "UpperHalf_1" "BoltCarrierGroup_1" "Bolt_1" "Extractor_1" "ChargingHandle_1" "CarryHandle_1" "SlingLoop_1" "LowerHalf_1" "Magazine_1" "ButtStock_1" "Sling_1" "ExtractorPin_1" "BoltCam_1" "FiringPinRetainingPin_1" "FiringPin_1" [ "CarryHandleScrew_1" "CarryHandleScrew_2" ] [ "Round_1" ] [ "Casing_1" ] "UpperHandGuard_1" "LowerHandGuard_1" "SlipRing_1" "Selector_1" "MagazineReleaseButton_1" "Hammer_1" "PivotPin_1" "TakedownPin_1" "BoltCatch_1" "SlingSwivel_1" "ButtStockLockLever_1" "LowerReceiverExtension_1" "Buffer_1" "Trigger_1" "BufferRetainer_1" "Chamber_1" "BoltCatchTop_1" "BoltCatchBottom_1" "TakedownPinTail_1" "PivotPinTail_1" ]] )
+  m4^0.1^Point( M4_1 ShootingBerm )
+  m4^0.1^SelectSwitchPosition( Selector_1 Safe )
+  m4^0.1^Push( MagazineReleaseButton_1 )
+  m4^0.1^PullAndHold( ChargingHandle_1 )
+  m4^0.1^PushAndHold( BoltCatchBottom_1 )
+  m4^0.1^Release( ChargingHandle_1 )
+  m4^0.1^Release( BoltCatchBottom_1 )
+  m4^0.1^Push( ChargingHandle_1 )
+  m4^0.1^Inspect( Chamber_1 )
+  m4^0.1^SelectSwitchPosition( Selector_1 Safe )
+  m4^0.1^Push( BoltCatchTop_1 )
+  m4^0.1^SelectSwitchPosition( Selector_1 Semi )
+  m4^0.1^Pull( Trigger_1 )
+  m4^0.1^PullAndHold( ChargingHandle_1 )
+  m4^0.1^Release( ChargingHandle_1 )
+  m4^0.1^SelectSwitchPosition( Selector_1 Safe )
+]</demonstration>
+    <step id="m4^0.1^CreateM4-1-1">
+        <atom functor="m4^0.1^CreateM4">
+            <parameter accessor="M4" id="m4^0.1^CreateM4-1-1-M4"/>
+            <parameter accessor="components" id="m4^0.1^CreateM4-1-1-components">
+                <sub_param accessor="UpperHalf" id="m4^0.1^CreateM4-1-1-components-UpperHalf"/>
+                <sub_param accessor="BoltCarrierGroup" id="m4^0.1^CreateM4-1-1-components-BoltCarrierGroup"/>
+                <sub_param accessor="Bolt" id="m4^0.1^CreateM4-1-1-components-Bolt"/>
+                <sub_param accessor="Extractor" id="m4^0.1^CreateM4-1-1-components-Extractor"/>
+                <sub_param accessor="ChargingHandle" id="m4^0.1^CreateM4-1-1-components-ChargingHandle"/>
+                <sub_param accessor="CarryHandle" id="m4^0.1^CreateM4-1-1-components-CarryHandle"/>
+                <sub_param accessor="SlingLoop" id="m4^0.1^CreateM4-1-1-components-SlingLoop"/>
+                <sub_param accessor="LowerHalf" id="m4^0.1^CreateM4-1-1-components-LowerHalf"/>
+                <sub_param accessor="Magazine" id="m4^0.1^CreateM4-1-1-components-Magazine"/>
+                <sub_param accessor="ButtStock" id="m4^0.1^CreateM4-1-1-components-ButtStock"/>
+                <sub_param accessor="Sling" id="m4^0.1^CreateM4-1-1-components-Sling"/>
+                <sub_param accessor="ExtractorPin" id="m4^0.1^CreateM4-1-1-components-ExtractorPin"/>
+                <sub_param accessor="BoltCam" id="m4^0.1^CreateM4-1-1-components-BoltCam"/>
+                <sub_param accessor="FiringPinRetainingPin" id="m4^0.1^CreateM4-1-1-components-FiringPinRetainingPin"/>
+                <sub_param accessor="FiringPin" id="m4^0.1^CreateM4-1-1-components-FiringPin"/>
+                <sub_param accessor="CarryHandleScrew" id="m4^0.1^CreateM4-1-1-components-CarryHandleScrew">
+                    <sub_param accessor="first" id="m4^0.1^CreateM4-1-1-components-CarryHandleScrew-first"/>
+                    <sub_param accessor="last" id="m4^0.1^CreateM4-1-1-components-CarryHandleScrew-last"/>
+                </sub_param>
+                <sub_param accessor="Round" id="m4^0.1^CreateM4-1-1-components-Round">
+                    <sub_param accessor="only" id="m4^0.1^CreateM4-1-1-components-Round-only"/>
+                </sub_param>
+                <sub_param accessor="Casing" id="m4^0.1^CreateM4-1-1-components-Casing">
+                    <sub_param accessor="only" id="m4^0.1^CreateM4-1-1-components-Casing-only"/>
+                </sub_param>
+                <sub_param accessor="UpperHandGuard" id="m4^0.1^CreateM4-1-1-components-UpperHandGuard"/>
+                <sub_param accessor="LowerHandGuard" id="m4^0.1^CreateM4-1-1-components-LowerHandGuard"/>
+                <sub_param accessor="SlipRing" id="m4^0.1^CreateM4-1-1-components-SlipRing"/>
+                <sub_param accessor="Selector" id="m4^0.1^CreateM4-1-1-components-Selector"/>
+                <sub_param accessor="MagazineReleaseButton" id="m4^0.1^CreateM4-1-1-components-MagazineReleaseButton"/>
+                <sub_param accessor="Hammer" id="m4^0.1^CreateM4-1-1-components-Hammer"/>
+                <sub_param accessor="PivotPin" id="m4^0.1^CreateM4-1-1-components-PivotPin"/>
+                <sub_param accessor="TakedownPin" id="m4^0.1^CreateM4-1-1-components-TakedownPin"/>
+                <sub_param accessor="BoltCatch" id="m4^0.1^CreateM4-1-1-components-BoltCatch"/>
+                <sub_param accessor="SlingSwivel" id="m4^0.1^CreateM4-1-1-components-SlingSwivel"/>
+                <sub_param accessor="ButtStockLockLever" id="m4^0.1^CreateM4-1-1-components-ButtStockLockLever"/>
+                <sub_param accessor="LowerReceiverExtension" id="m4^0.1^CreateM4-1-1-components-LowerReceiverExtension"/>
+                <sub_param accessor="Buffer" id="m4^0.1^CreateM4-1-1-components-Buffer"/>
+                <sub_param accessor="Trigger" id="m4^0.1^CreateM4-1-1-components-Trigger"/>
+                <sub_param accessor="BufferRetainer" id="m4^0.1^CreateM4-1-1-components-BufferRetainer"/>
+                <sub_param accessor="Chamber" id="m4^0.1^CreateM4-1-1-components-Chamber"/>
+                <sub_param accessor="BoltCatchTop" id="m4^0.1^CreateM4-1-1-components-BoltCatchTop"/>
+                <sub_param accessor="BoltCatchBottom" id="m4^0.1^CreateM4-1-1-components-BoltCatchBottom"/>
+                <sub_param accessor="TakedownPinTail" id="m4^0.1^CreateM4-1-1-components-TakedownPinTail"/>
+                <sub_param accessor="PivotPinTail" id="m4^0.1^CreateM4-1-1-components-PivotPinTail"/>
+            </parameter>
+        </atom>
+    </step>
+    <step id="m4^0.1^Point-1-2">
+        <atom functor="m4^0.1^Point">
+            <parameter accessor="thingPointed" id="m4^0.1^Point-1-2-thingPointed"/>
+            <parameter accessor="pointedAt" id="m4^0.1^Point-1-2-pointedAt"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^SelectSwitchPosition-1-3">
+        <atom functor="m4^0.1^SelectSwitchPosition">
+            <parameter accessor="switch" id="m4^0.1^SelectSwitchPosition-1-3-switch"/>
+            <parameter accessor="switchPosition" id="m4^0.1^SelectSwitchPosition-1-3-switchPosition"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Push-1-4">
+        <atom functor="m4^0.1^Push">
+            <parameter accessor="thingPushed" id="m4^0.1^Push-1-4-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^PullAndHold-1-5">
+        <atom functor="m4^0.1^PullAndHold">
+            <parameter accessor="thingPulled" id="m4^0.1^PullAndHold-1-5-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^PushAndHold-1-6">
+        <atom functor="m4^0.1^PushAndHold">
+            <parameter accessor="thingPushed" id="m4^0.1^PushAndHold-1-6-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Release-1-7">
+        <atom functor="m4^0.1^Release">
+            <parameter accessor="thingReleased" id="m4^0.1^Release-1-7-thingReleased"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Release-1-8">
+        <atom functor="m4^0.1^Release">
+            <parameter accessor="thingReleased" id="m4^0.1^Release-1-8-thingReleased"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Push-1-9">
+        <atom functor="m4^0.1^Push">
+            <parameter accessor="thingPushed" id="m4^0.1^Push-1-9-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Inspect-1-10">
+        <atom functor="m4^0.1^Inspect">
+            <parameter accessor="thingInspected" id="m4^0.1^Inspect-1-10-thingInspected"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^SelectSwitchPosition-1-11">
+        <atom functor="m4^0.1^SelectSwitchPosition">
+            <parameter accessor="switch" id="m4^0.1^SelectSwitchPosition-1-11-switch"/>
+            <parameter accessor="switchPosition" id="m4^0.1^SelectSwitchPosition-1-11-switchPosition"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Push-1-12">
+        <atom functor="m4^0.1^Push">
+            <parameter accessor="thingPushed" id="m4^0.1^Push-1-12-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^SelectSwitchPosition-1-13">
+        <atom functor="m4^0.1^SelectSwitchPosition">
+            <parameter accessor="switch" id="m4^0.1^SelectSwitchPosition-1-13-switch"/>
+            <parameter accessor="switchPosition" id="m4^0.1^SelectSwitchPosition-1-13-switchPosition"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Pull-1-14">
+        <atom functor="m4^0.1^Pull">
+            <parameter accessor="thingPulled" id="m4^0.1^Pull-1-14-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^PullAndHold-1-15">
+        <atom functor="m4^0.1^PullAndHold">
+            <parameter accessor="thingPulled" id="m4^0.1^PullAndHold-1-15-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Release-1-16">
+        <atom functor="m4^0.1^Release">
+            <parameter accessor="thingReleased" id="m4^0.1^Release-1-16-thingReleased"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^SelectSwitchPosition-1-17">
+        <atom functor="m4^0.1^SelectSwitchPosition">
+            <parameter accessor="switch" id="m4^0.1^SelectSwitchPosition-1-17-switch"/>
+            <parameter accessor="switchPosition" id="m4^0.1^SelectSwitchPosition-1-17-switchPosition"/>
+        </atom>
+    </step>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Selector</parameter>
+        <parameter>m4^0.1^SelectSwitchPosition-1-3-switch</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-MagazineReleaseButton</parameter>
+        <parameter>m4^0.1^Push-1-4-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ChargingHandle</parameter>
+        <parameter>m4^0.1^PullAndHold-1-5-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCatchBottom</parameter>
+        <parameter>m4^0.1^PushAndHold-1-6-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ChargingHandle</parameter>
+        <parameter>m4^0.1^Release-1-7-thingReleased</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCatchBottom</parameter>
+        <parameter>m4^0.1^Release-1-8-thingReleased</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ChargingHandle</parameter>
+        <parameter>m4^0.1^Push-1-9-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Chamber</parameter>
+        <parameter>m4^0.1^Inspect-1-10-thingInspected</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Selector</parameter>
+        <parameter>m4^0.1^SelectSwitchPosition-1-11-switch</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCatchTop</parameter>
+        <parameter>m4^0.1^Push-1-12-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Selector</parameter>
+        <parameter>m4^0.1^SelectSwitchPosition-1-13-switch</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Trigger</parameter>
+        <parameter>m4^0.1^Pull-1-14-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ChargingHandle</parameter>
+        <parameter>m4^0.1^PullAndHold-1-15-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ChargingHandle</parameter>
+        <parameter>m4^0.1^Release-1-16-thingReleased</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Selector</parameter>
+        <parameter>m4^0.1^SelectSwitchPosition-1-17-switch</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-M4</parameter>
+        <parameter>m4^0.1^Point-1-2-thingPointed</parameter>
+    </equality_constraint>
+    <ordering_constraint successor="m4^0.1^Point-1-2" predecessor="m4^0.1^CreateM4-1-1"/>
+    <ordering_constraint successor="m4^0.1^SelectSwitchPosition-1-3" predecessor="m4^0.1^Point-1-2"/>
+    <ordering_constraint successor="m4^0.1^Push-1-4" predecessor="m4^0.1^SelectSwitchPosition-1-3"/>
+    <ordering_constraint successor="m4^0.1^PullAndHold-1-5" predecessor="m4^0.1^Push-1-4"/>
+    <ordering_constraint successor="m4^0.1^PushAndHold-1-6" predecessor="m4^0.1^PullAndHold-1-5"/>
+    <ordering_constraint successor="m4^0.1^Release-1-7" predecessor="m4^0.1^PushAndHold-1-6"/>
+    <ordering_constraint successor="m4^0.1^Release-1-8" predecessor="m4^0.1^Release-1-7"/>
+    <ordering_constraint successor="m4^0.1^Push-1-9" predecessor="m4^0.1^Release-1-8"/>
+    <ordering_constraint successor="m4^0.1^Inspect-1-10" predecessor="m4^0.1^Push-1-9"/>
+    <ordering_constraint successor="m4^0.1^SelectSwitchPosition-1-11" predecessor="m4^0.1^Inspect-1-10"/>
+    <ordering_constraint successor="m4^0.1^Push-1-12" predecessor="m4^0.1^SelectSwitchPosition-1-11"/>
+    <ordering_constraint successor="m4^0.1^SelectSwitchPosition-1-13" predecessor="m4^0.1^Push-1-12"/>
+    <ordering_constraint successor="m4^0.1^Pull-1-14" predecessor="m4^0.1^SelectSwitchPosition-1-13"/>
+    <ordering_constraint successor="m4^0.1^PullAndHold-1-15" predecessor="m4^0.1^Pull-1-14"/>
+    <ordering_constraint successor="m4^0.1^Release-1-16" predecessor="m4^0.1^PullAndHold-1-15"/>
+    <ordering_constraint successor="m4^0.1^SelectSwitchPosition-1-17" predecessor="m4^0.1^Release-1-16"/>
+    <value_constraint>
+        <parameter>m4^0.1^Point-1-2-pointedAt</parameter>
+        <value>
+            <ctrs>typed("ShootingBerm", "m4^0.1^PhysicalEntity")</ctrs>
+            <type>m4^0.1^PhysicalEntity</type>
+        </value>
+    </value_constraint>
+    <value_constraint>
+        <parameter>m4^0.1^SelectSwitchPosition-1-3-switchPosition</parameter>
+        <value>
+            <ctrs>typed("Safe", "m4^0.1^SwitchPosition")</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+        </value>
+    </value_constraint>
+    <value_constraint>
+        <parameter>m4^0.1^SelectSwitchPosition-1-11-switchPosition</parameter>
+        <value>
+            <ctrs>typed("Safe", "m4^0.1^SwitchPosition")</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+        </value>
+    </value_constraint>
+    <value_constraint>
+        <parameter>m4^0.1^SelectSwitchPosition-1-13-switchPosition</parameter>
+        <value>
+            <ctrs>typed("Semi", "m4^0.1^SwitchPosition")</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+        </value>
+    </value_constraint>
+    <value_constraint>
+        <parameter>m4^0.1^SelectSwitchPosition-1-17-switchPosition</parameter>
+        <value>
+            <ctrs>typed("Safe", "m4^0.1^SwitchPosition")</ctrs>
+            <type>m4^0.1^SwitchPosition</type>
+        </value>
+    </value_constraint>
+</option>
+
+    </task_solution>
+  </solution>
+
+  <success_html>You have successfully cleared your weapon!</success_html>
+
+</exercise>

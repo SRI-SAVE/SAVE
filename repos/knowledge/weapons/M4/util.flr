@@ -1,0 +1,61 @@
+//
+// Copyright 2016 SRI International
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+/* 
+Flora utilities for SAVE.
+*/
+
+loaded(util).
+
+// --- Instance constructor utilities ---
+
+// We maintain a predicate idx/2, which maps class names to the last index used
+// for instances of that class.
+@!{CreateNameRule}
+%create_name(?cls,?name) :-
+  \if idx(?cls,?i) \then (
+    ?i2 \is ?i + 1,
+    t_delete{idx(?cls,?i)},
+    t_insert{idx(?cls,?i2)},
+    fmt_write_string(?name,'%S_%d',f2(?cls,?i2))@\io
+  )
+  \else (
+    t_insert{idx(?cls,1)},
+    fmt_write_string(?name,'%S_1',f1(?cls))@\io
+  ).
+
+@!{CreateNRule}
+%create_n(?cls,?n,?list) :-
+  \if ?n == 0 \then ?list = []
+  \else (
+    %create(?cls,?ind),
+    ?n2 \is ?n - 1,
+    %create_n(?cls,?n2,?inds),
+    ?list = [?ind|?inds]
+  ).
+
+
+// --- Schema Query utilities ---
+
+// Returns a list of the smallest types which ?i is an instance of
+direct_types(?i,?dtypes) :-
+  ?alltypes = setof{?t | ?i : ?t},
+  ?dtypes = setof{?t2 | ?alltypes[member(?t2)]@\basetype, ?t2 \= \symbol, \naf exists(?t3)^(?alltypes[member(?t3)]@\basetype, ?t3 :: ?t2, ?t3 \= ?t2)}.  
+
+// Returns the "first" smallest-type which ?i is an instance of
+first_direct_type(?i,?t) :-
+  direct_types(?i,[?t|?]).
+

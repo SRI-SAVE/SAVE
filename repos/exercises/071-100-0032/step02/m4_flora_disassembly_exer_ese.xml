@@ -1,0 +1,473 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<exercise id="M4 Disassembly (Flora) ESE">
+
+  <name>M4 Disassembly Task (Flora) ESE</name>
+  <description>Disassemble an M4.</description>
+  <datafile>../../../s3d/weapons/M4/M4.s3d</datafile>
+  <datafile auto="true">../../../s3d/environments/range/ShootingRange.s3d</datafile>
+  <action_model>../../../knowledge/weapons/M4/m4.xml</action_model>
+  <html>The purpose of this exercise is to practice disassembling an M4.</html>
+
+  <problem>
+    <task id='task-1'>
+      <name>Exercise</name>
+      <html>Disassemble your weapon.</html>
+    </task>
+  </problem>
+
+  <solution>
+    <task_solution task='task-1'>
+ <option>
+    <demonstration>[
+  m4^0.1^CreateM4( M4_1 [[ UpperHalf BoltCarrierGroup Bolt Extractor ChargingHandle CarryHandle SlingLoop LowerHalf Magazine ButtStock Sling ExtractorPin BoltCam FiringPinRetainingPin FiringPin CarryHandleScrew Round Casing UpperHandGuard LowerHandGuard SlipRing Selector MagazineReleaseButton Hammer PivotPin TakedownPin BoltCatch SlingSwivel ButtStockLockLever LowerReceiverExtension Buffer Trigger BufferRetainer Chamber BoltCatchTop BoltCatchBottom TakedownPinTail PivotPinTail ] [ "UpperHalf_1" "BoltCarrierGroup_1" "Bolt_1" "Extractor_1" "ChargingHandle_1" "CarryHandle_1" "SlingLoop_1" "LowerHalf_1" "Magazine_1" "ButtStock_1" "Sling_1" "ExtractorPin_1" "BoltCam_1" "FiringPinRetainingPin_1" "FiringPin_1" [ "CarryHandleScrew_1" "CarryHandleScrew_2" ] [ "Round_1" ] [ "Casing_1" ] "UpperHandGuard_1" "LowerHandGuard_1" "SlipRing_1" "Selector_1" "MagazineReleaseButton_1" "Hammer_1" "PivotPin_1" "TakedownPin_1" "BoltCatch_1" "SlingSwivel_1" "ButtStockLockLever_1" "LowerReceiverExtension_1" "Buffer_1" "Trigger_1" "BufferRetainer_1" "Chamber_1" "BoltCatchTop_1" "BoltCatchBottom_1" "TakedownPinTail_1" "PivotPinTail_1" ]] )
+  m4^0.1^Detach( Sling_1 SlingSwivel_1 )
+  m4^0.1^Detach( Sling_1 SlingLoop_1 )
+  m4^0.1^Press( SlipRing_1 )
+  m4^0.1^Detach( UpperHandGuard_1 UpperHalf_1 )
+  m4^0.1^Detach( LowerHandGuard_1 UpperHalf_1 )
+  m4^0.1^Push( TakedownPinTail_1 )
+  m4^0.1^Pull( TakedownPin_1 )
+  m4^0.1^Open( M4_1 )
+  m4^0.1^Push( PivotPinTail_1 )
+  m4^0.1^Pull( PivotPin_1 )
+  m4^0.1^Detach( UpperHalf_1 LowerHalf_1 )
+  m4^0.1^LoosenScrew( CarryHandleScrew_1 )
+  m4^0.1^LoosenScrew( CarryHandleScrew_2 )
+  m4^0.1^Detach( CarryHandle_1 UpperHalf_1 )
+  m4^0.1^Pull( ChargingHandle_1 )
+  m4^0.1^Extract( FiringPinRetainingPin_1 BoltCarrierGroup_1 )
+  m4^0.1^Extract( FiringPin_1 BoltCarrierGroup_1 )
+  m4^0.1^Extract( BoltCam_1 BoltCarrierGroup_1 )
+  m4^0.1^Extract( Bolt_1 BoltCarrierGroup_1 )
+  m4^0.1^Inspect( ExtractorPin_1 )
+  m4^0.1^Extract( ExtractorPin_1 Bolt_1 )
+  m4^0.1^Extract( Extractor_1 Bolt_1 )
+  m4^0.1^PushAndHold( Buffer_1 )
+  m4^0.1^PushAndHold( BufferRetainer_1 )
+  m4^0.1^Release( Buffer_1 )
+  m4^0.1^Pull( ButtStock_1 )
+  m4^0.1^PushAndHold( ButtStockLockLever_1 )
+  m4^0.1^Detach( ButtStock_1 LowerHalf_1 )
+]</demonstration>
+    <step id="m4^0.1^CreateM4-1-1">
+        <atom functor="m4^0.1^CreateM4">
+            <parameter accessor="M4" id="m4^0.1^CreateM4-1-1-M4"/>
+            <parameter accessor="components" id="m4^0.1^CreateM4-1-1-components">
+                <sub_param accessor="UpperHalf" id="m4^0.1^CreateM4-1-1-components-UpperHalf"/>
+                <sub_param accessor="BoltCarrierGroup" id="m4^0.1^CreateM4-1-1-components-BoltCarrierGroup"/>
+                <sub_param accessor="Bolt" id="m4^0.1^CreateM4-1-1-components-Bolt"/>
+                <sub_param accessor="Extractor" id="m4^0.1^CreateM4-1-1-components-Extractor"/>
+                <sub_param accessor="ChargingHandle" id="m4^0.1^CreateM4-1-1-components-ChargingHandle"/>
+                <sub_param accessor="CarryHandle" id="m4^0.1^CreateM4-1-1-components-CarryHandle"/>
+                <sub_param accessor="SlingLoop" id="m4^0.1^CreateM4-1-1-components-SlingLoop"/>
+                <sub_param accessor="LowerHalf" id="m4^0.1^CreateM4-1-1-components-LowerHalf"/>
+                <sub_param accessor="Magazine" id="m4^0.1^CreateM4-1-1-components-Magazine"/>
+                <sub_param accessor="ButtStock" id="m4^0.1^CreateM4-1-1-components-ButtStock"/>
+                <sub_param accessor="Sling" id="m4^0.1^CreateM4-1-1-components-Sling"/>
+                <sub_param accessor="ExtractorPin" id="m4^0.1^CreateM4-1-1-components-ExtractorPin"/>
+                <sub_param accessor="BoltCam" id="m4^0.1^CreateM4-1-1-components-BoltCam"/>
+                <sub_param accessor="FiringPinRetainingPin" id="m4^0.1^CreateM4-1-1-components-FiringPinRetainingPin"/>
+                <sub_param accessor="FiringPin" id="m4^0.1^CreateM4-1-1-components-FiringPin"/>
+                <sub_param accessor="CarryHandleScrew" id="m4^0.1^CreateM4-1-1-components-CarryHandleScrew">
+                    <sub_param accessor="first" id="m4^0.1^CreateM4-1-1-components-CarryHandleScrew-first"/>
+                    <sub_param accessor="last" id="m4^0.1^CreateM4-1-1-components-CarryHandleScrew-last"/>
+                </sub_param>
+                <sub_param accessor="Round" id="m4^0.1^CreateM4-1-1-components-Round">
+                    <sub_param accessor="only" id="m4^0.1^CreateM4-1-1-components-Round-only"/>
+                </sub_param>
+                <sub_param accessor="Casing" id="m4^0.1^CreateM4-1-1-components-Casing">
+                    <sub_param accessor="only" id="m4^0.1^CreateM4-1-1-components-Casing-only"/>
+                </sub_param>
+                <sub_param accessor="UpperHandGuard" id="m4^0.1^CreateM4-1-1-components-UpperHandGuard"/>
+                <sub_param accessor="LowerHandGuard" id="m4^0.1^CreateM4-1-1-components-LowerHandGuard"/>
+                <sub_param accessor="SlipRing" id="m4^0.1^CreateM4-1-1-components-SlipRing"/>
+                <sub_param accessor="Selector" id="m4^0.1^CreateM4-1-1-components-Selector"/>
+                <sub_param accessor="MagazineReleaseButton" id="m4^0.1^CreateM4-1-1-components-MagazineReleaseButton"/>
+                <sub_param accessor="Hammer" id="m4^0.1^CreateM4-1-1-components-Hammer"/>
+                <sub_param accessor="PivotPin" id="m4^0.1^CreateM4-1-1-components-PivotPin"/>
+                <sub_param accessor="TakedownPin" id="m4^0.1^CreateM4-1-1-components-TakedownPin"/>
+                <sub_param accessor="BoltCatch" id="m4^0.1^CreateM4-1-1-components-BoltCatch"/>
+                <sub_param accessor="SlingSwivel" id="m4^0.1^CreateM4-1-1-components-SlingSwivel"/>
+                <sub_param accessor="ButtStockLockLever" id="m4^0.1^CreateM4-1-1-components-ButtStockLockLever"/>
+                <sub_param accessor="LowerReceiverExtension" id="m4^0.1^CreateM4-1-1-components-LowerReceiverExtension"/>
+                <sub_param accessor="Buffer" id="m4^0.1^CreateM4-1-1-components-Buffer"/>
+                <sub_param accessor="Trigger" id="m4^0.1^CreateM4-1-1-components-Trigger"/>
+                <sub_param accessor="BufferRetainer" id="m4^0.1^CreateM4-1-1-components-BufferRetainer"/>
+                <sub_param accessor="Chamber" id="m4^0.1^CreateM4-1-1-components-Chamber"/>
+                <sub_param accessor="BoltCatchTop" id="m4^0.1^CreateM4-1-1-components-BoltCatchTop"/>
+                <sub_param accessor="BoltCatchBottom" id="m4^0.1^CreateM4-1-1-components-BoltCatchBottom"/>
+                <sub_param accessor="TakedownPinTail" id="m4^0.1^CreateM4-1-1-components-TakedownPinTail"/>
+                <sub_param accessor="PivotPinTail" id="m4^0.1^CreateM4-1-1-components-PivotPinTail"/>
+            </parameter>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-2">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-2-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-2-detachedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-3">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-3-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-3-detachedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Press-1-4">
+        <atom functor="m4^0.1^Press">
+            <parameter accessor="thingPressed" id="m4^0.1^Press-1-4-thingPressed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-5">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-5-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-5-detachedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-6">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-6-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-6-detachedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Push-1-7">
+        <atom functor="m4^0.1^Push">
+            <parameter accessor="thingPushed" id="m4^0.1^Push-1-7-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Pull-1-8">
+        <atom functor="m4^0.1^Pull">
+            <parameter accessor="thingPulled" id="m4^0.1^Pull-1-8-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Open-1-9">
+        <atom functor="m4^0.1^Open">
+            <parameter accessor="thingOpened" id="m4^0.1^Open-1-9-thingOpened"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Push-1-10">
+        <atom functor="m4^0.1^Push">
+            <parameter accessor="thingPushed" id="m4^0.1^Push-1-10-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Pull-1-11">
+        <atom functor="m4^0.1^Pull">
+            <parameter accessor="thingPulled" id="m4^0.1^Pull-1-11-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-12">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-12-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-12-detachedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^LoosenScrew-1-13">
+        <atom functor="m4^0.1^LoosenScrew">
+            <parameter accessor="screwLoosened" id="m4^0.1^LoosenScrew-1-13-screwLoosened"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^LoosenScrew-1-14">
+        <atom functor="m4^0.1^LoosenScrew">
+            <parameter accessor="screwLoosened" id="m4^0.1^LoosenScrew-1-14-screwLoosened"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-15">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-15-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-15-detachedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Pull-1-16">
+        <atom functor="m4^0.1^Pull">
+            <parameter accessor="thingPulled" id="m4^0.1^Pull-1-16-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Extract-1-17">
+        <atom functor="m4^0.1^Extract">
+            <parameter accessor="thingExtracted" id="m4^0.1^Extract-1-17-thingExtracted"/>
+            <parameter accessor="extractedFrom" id="m4^0.1^Extract-1-17-extractedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Extract-1-18">
+        <atom functor="m4^0.1^Extract">
+            <parameter accessor="thingExtracted" id="m4^0.1^Extract-1-18-thingExtracted"/>
+            <parameter accessor="extractedFrom" id="m4^0.1^Extract-1-18-extractedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Extract-1-19">
+        <atom functor="m4^0.1^Extract">
+            <parameter accessor="thingExtracted" id="m4^0.1^Extract-1-19-thingExtracted"/>
+            <parameter accessor="extractedFrom" id="m4^0.1^Extract-1-19-extractedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Extract-1-20">
+        <atom functor="m4^0.1^Extract">
+            <parameter accessor="thingExtracted" id="m4^0.1^Extract-1-20-thingExtracted"/>
+            <parameter accessor="extractedFrom" id="m4^0.1^Extract-1-20-extractedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Inspect-1-21">
+        <atom functor="m4^0.1^Inspect">
+            <parameter accessor="thingInspected" id="m4^0.1^Inspect-1-21-thingInspected"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Extract-1-22">
+        <atom functor="m4^0.1^Extract">
+            <parameter accessor="thingExtracted" id="m4^0.1^Extract-1-22-thingExtracted"/>
+            <parameter accessor="extractedFrom" id="m4^0.1^Extract-1-22-extractedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Extract-1-23">
+        <atom functor="m4^0.1^Extract">
+            <parameter accessor="thingExtracted" id="m4^0.1^Extract-1-23-thingExtracted"/>
+            <parameter accessor="extractedFrom" id="m4^0.1^Extract-1-23-extractedFrom"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^PushAndHold-1-24">
+        <atom functor="m4^0.1^PushAndHold">
+            <parameter accessor="thingPushed" id="m4^0.1^PushAndHold-1-24-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^PushAndHold-1-25">
+        <atom functor="m4^0.1^PushAndHold">
+            <parameter accessor="thingPushed" id="m4^0.1^PushAndHold-1-25-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Release-1-26">
+        <atom functor="m4^0.1^Release">
+            <parameter accessor="thingReleased" id="m4^0.1^Release-1-26-thingReleased"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Pull-1-27">
+        <atom functor="m4^0.1^Pull">
+            <parameter accessor="thingPulled" id="m4^0.1^Pull-1-27-thingPulled"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^PushAndHold-1-28">
+        <atom functor="m4^0.1^PushAndHold">
+            <parameter accessor="thingPushed" id="m4^0.1^PushAndHold-1-28-thingPushed"/>
+        </atom>
+    </step>
+    <step id="m4^0.1^Detach-1-29">
+        <atom functor="m4^0.1^Detach">
+            <parameter accessor="thingDetached" id="m4^0.1^Detach-1-29-thingDetached"/>
+            <parameter accessor="detachedFrom" id="m4^0.1^Detach-1-29-detachedFrom"/>
+        </atom>
+    </step>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Sling</parameter>
+        <parameter>m4^0.1^Detach-1-2-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-SlingSwivel</parameter>
+        <parameter>m4^0.1^Detach-1-2-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Sling</parameter>
+        <parameter>m4^0.1^Detach-1-3-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-SlingLoop</parameter>
+        <parameter>m4^0.1^Detach-1-3-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-SlipRing</parameter>
+        <parameter>m4^0.1^Press-1-4-thingPressed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-UpperHandGuard</parameter>
+        <parameter>m4^0.1^Detach-1-5-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-UpperHalf</parameter>
+        <parameter>m4^0.1^Detach-1-5-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-LowerHandGuard</parameter>
+        <parameter>m4^0.1^Detach-1-6-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-UpperHalf</parameter>
+        <parameter>m4^0.1^Detach-1-6-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-TakedownPinTail</parameter>
+        <parameter>m4^0.1^Push-1-7-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-TakedownPin</parameter>
+        <parameter>m4^0.1^Pull-1-8-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-PivotPinTail</parameter>
+        <parameter>m4^0.1^Push-1-10-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-PivotPin</parameter>
+        <parameter>m4^0.1^Pull-1-11-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-UpperHalf</parameter>
+        <parameter>m4^0.1^Detach-1-12-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-LowerHalf</parameter>
+        <parameter>m4^0.1^Detach-1-12-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-CarryHandleScrew-first</parameter>
+        <parameter>m4^0.1^LoosenScrew-1-13-screwLoosened</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-CarryHandleScrew-last</parameter>
+        <parameter>m4^0.1^LoosenScrew-1-14-screwLoosened</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-CarryHandle</parameter>
+        <parameter>m4^0.1^Detach-1-15-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-UpperHalf</parameter>
+        <parameter>m4^0.1^Detach-1-15-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ChargingHandle</parameter>
+        <parameter>m4^0.1^Pull-1-16-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-FiringPinRetainingPin</parameter>
+        <parameter>m4^0.1^Extract-1-17-thingExtracted</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCarrierGroup</parameter>
+        <parameter>m4^0.1^Extract-1-17-extractedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-FiringPin</parameter>
+        <parameter>m4^0.1^Extract-1-18-thingExtracted</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCarrierGroup</parameter>
+        <parameter>m4^0.1^Extract-1-18-extractedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCam</parameter>
+        <parameter>m4^0.1^Extract-1-19-thingExtracted</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCarrierGroup</parameter>
+        <parameter>m4^0.1^Extract-1-19-extractedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Bolt</parameter>
+        <parameter>m4^0.1^Extract-1-20-thingExtracted</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BoltCarrierGroup</parameter>
+        <parameter>m4^0.1^Extract-1-20-extractedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ExtractorPin</parameter>
+        <parameter>m4^0.1^Inspect-1-21-thingInspected</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ExtractorPin</parameter>
+        <parameter>m4^0.1^Extract-1-22-thingExtracted</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Bolt</parameter>
+        <parameter>m4^0.1^Extract-1-22-extractedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Extractor</parameter>
+        <parameter>m4^0.1^Extract-1-23-thingExtracted</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Bolt</parameter>
+        <parameter>m4^0.1^Extract-1-23-extractedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Buffer</parameter>
+        <parameter>m4^0.1^PushAndHold-1-24-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-BufferRetainer</parameter>
+        <parameter>m4^0.1^PushAndHold-1-25-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-Buffer</parameter>
+        <parameter>m4^0.1^Release-1-26-thingReleased</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ButtStock</parameter>
+        <parameter>m4^0.1^Pull-1-27-thingPulled</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ButtStockLockLever</parameter>
+        <parameter>m4^0.1^PushAndHold-1-28-thingPushed</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-ButtStock</parameter>
+        <parameter>m4^0.1^Detach-1-29-thingDetached</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-components-LowerHalf</parameter>
+        <parameter>m4^0.1^Detach-1-29-detachedFrom</parameter>
+    </equality_constraint>
+    <equality_constraint>
+        <parameter>m4^0.1^CreateM4-1-1-M4</parameter>
+        <parameter>m4^0.1^Open-1-9-thingOpened</parameter>
+    </equality_constraint>
+    <ordering_constraint successor="m4^0.1^Detach-1-2" predecessor="m4^0.1^CreateM4-1-1"/>
+    <ordering_constraint successor="m4^0.1^Detach-1-3" predecessor="m4^0.1^Detach-1-2"/>
+    <ordering_constraint successor="m4^0.1^Press-1-4" predecessor="m4^0.1^Detach-1-3"/>
+    <ordering_constraint successor="m4^0.1^Detach-1-5" predecessor="m4^0.1^Press-1-4"/>
+    <ordering_constraint successor="m4^0.1^Detach-1-6" predecessor="m4^0.1^Detach-1-5"/>
+    <ordering_constraint successor="m4^0.1^Push-1-7" predecessor="m4^0.1^Detach-1-6"/>
+    <ordering_constraint successor="m4^0.1^Pull-1-8" predecessor="m4^0.1^Push-1-7"/>
+    <ordering_constraint successor="m4^0.1^Open-1-9" predecessor="m4^0.1^Pull-1-8"/>
+    <ordering_constraint successor="m4^0.1^Push-1-10" predecessor="m4^0.1^Open-1-9"/>
+    <ordering_constraint successor="m4^0.1^Pull-1-11" predecessor="m4^0.1^Push-1-10"/>
+    <ordering_constraint successor="m4^0.1^Detach-1-12" predecessor="m4^0.1^Pull-1-11"/>
+    <ordering_constraint successor="m4^0.1^LoosenScrew-1-13" predecessor="m4^0.1^Detach-1-12"/>
+    <ordering_constraint successor="m4^0.1^LoosenScrew-1-14" predecessor="m4^0.1^LoosenScrew-1-13"/>
+    <ordering_constraint successor="m4^0.1^Detach-1-15" predecessor="m4^0.1^LoosenScrew-1-14"/>
+    <ordering_constraint successor="m4^0.1^Pull-1-16" predecessor="m4^0.1^Detach-1-15"/>
+    <ordering_constraint successor="m4^0.1^Extract-1-17" predecessor="m4^0.1^Pull-1-16"/>
+    <ordering_constraint successor="m4^0.1^Extract-1-18" predecessor="m4^0.1^Extract-1-17"/>
+    <ordering_constraint successor="m4^0.1^Extract-1-19" predecessor="m4^0.1^Extract-1-18"/>
+    <ordering_constraint successor="m4^0.1^Extract-1-20" predecessor="m4^0.1^Extract-1-19"/>
+    <ordering_constraint successor="m4^0.1^Inspect-1-21" predecessor="m4^0.1^Extract-1-20"/>
+    <ordering_constraint successor="m4^0.1^Extract-1-22" predecessor="m4^0.1^Inspect-1-21"/>
+    <ordering_constraint successor="m4^0.1^Extract-1-23" predecessor="m4^0.1^Extract-1-22"/>
+    <ordering_constraint successor="m4^0.1^PushAndHold-1-24" predecessor="m4^0.1^Extract-1-23"/>
+    <ordering_constraint successor="m4^0.1^PushAndHold-1-25" predecessor="m4^0.1^PushAndHold-1-24"/>
+    <ordering_constraint successor="m4^0.1^Release-1-26" predecessor="m4^0.1^PushAndHold-1-25"/>
+    <ordering_constraint successor="m4^0.1^Pull-1-27" predecessor="m4^0.1^Release-1-26"/>
+    <ordering_constraint successor="m4^0.1^PushAndHold-1-28" predecessor="m4^0.1^Pull-1-27"/>
+    <ordering_constraint successor="m4^0.1^Detach-1-29" predecessor="m4^0.1^PushAndHold-1-28"/>
+</option>
+
+    </task_solution>
+  </solution>
+
+  <success_html>You have successfully disassembled your weapon!</success_html>
+
+</exercise>

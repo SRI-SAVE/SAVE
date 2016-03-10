@@ -1,0 +1,290 @@
+//
+// Copyright 2016 SRI International
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+loaded(m4_test).
+?- \unless loaded('m4') \do add{'m4'>>main}.
+
+// --- Standard action sequences, for testing purposes ---
+
+ShootingBerm : SafeTarget [].
+
+@!{ClearWeaponRule}
+%clear_weapon(?M4) :-
+  %point_weapon_at_target(?M4,ShootingBerm),
+  \+ %select_safe(?M4),
+  %push_magazine_release_button(?M4),
+  %pull_and_hold_charging_handle(?M4), 
+  %push_and_hold_bolt_catch_bottom(?M4), 
+  %release_charging_handle(?M4),  
+  %release_bolt_catch_bottom(?M4),
+  %push_charging_handle(?M4),
+  %inspect_chamber(?M4),
+  %select_safe(?M4),
+  %push_bolt_catch_top(?M4),
+  %select_semi(?M4),
+  %pull_and_hold_trigger(?M4),
+  %pull_and_hold_charging_handle(?M4),
+  %release_charging_handle(?M4),
+  %select_safe(?M4).
+
+// Note: We're not modeling "Push in bolt to locked position, 2.k.2"
+@!{DisassembleBoltRule}
+%disassemble_bolt(?M4) :-
+  %extract_firing_pin_retaining_pin(?M4),
+  %extract_firing_pin(?M4),
+  %extract_bolt_cam(?M4),
+  %extract_bolt(?M4),
+  %extract_extractor_pin(?M4),
+  %extract_extractor(?M4).
+  
+@!{DisassembleCarryHandleRule}
+%disassemble_carry_handle(?M4) :-
+  %loosen_rear_carry_handle_screw(?M4),
+  %loosen_front_carry_handle_screw(?M4),
+  %detach_carry_handle(?M4).
+
+@!{DisassembleButtstockRule}
+%disassemble_buttstock(?M4) :-
+  %pull_buttstock(?M4),
+  %push_and_hold_lock_lever(?M4),
+  %detach_buttstock(?M4).
+
+@!{DisassembleBufferRule}
+%disassemble_buffer(?M4) :-
+  %push_and_hold_buffer(?M4),
+  %push_and_hold_buffer_retainer(?M4),
+  %release_buffer(?M4).
+
+@!{RemoveHandguardsRule}
+%remove_handguards(?M4) :-
+  %press_slip_ring(?M4),
+  %detach_upper_handguard(?M4),
+  %detach_lower_handguard(?M4).
+
+@!{DisassembleWeaponRule}
+%disassemble_weapon(?M4) :-
+  %clear_weapon(?M4),
+  %detach_sling_front(?M4),
+  %detach_sling_rear(?M4),
+  %remove_handguards(?M4),
+  %push_takedown_pin_tail(?M4),
+  %pull_takedown_pin(?M4),
+  %open_upper(?M4),
+  %pull_charging_handle(?M4),
+  %detach_charging_handle(?M4),
+  %disassemble_bolt(?M4),
+  %disassemble_buttstock(?M4),
+  %disassemble_carry_handle(?M4),
+  %disassemble_buffer(?M4).
+
+@!{DisassembleWeaponWithDetachRule}
+%disassemble_weapon_with_detach(?M4) :-
+  %clear_weapon(?M4),
+  %detach_sling_front(?M4),
+  %detach_sling_rear(?M4),
+  %remove_handguards(?M4),
+  %push_takedown_pin_tail(?M4),
+  %pull_takedown_pin(?M4),
+  %open_upper(?M4),
+  %push_pivot_pin_tail(?M4),
+  %pull_pivot_pin(?M4),
+  %separate_halves(?M4),
+  %pull_charging_handle(?M4),
+  %detach_charging_handle(?M4),
+  %disassemble_bolt(?M4),
+  %disassemble_buttstock(?M4),
+  %disassemble_carry_handle(?M4),
+  %disassemble_buffer(?M4).
+
+@!{AssembleBufferRule}
+%assemble_buffer(?M4) :-
+  %push_and_hold_buffer_retainer(?M4),
+  %insert_buffer(?M4).
+
+@!{AssembleCarryHandleRule}
+%assemble_carry_handle(?M4) :-
+  %attach_carry_handle(?M4),
+  %tighten_rear_carry_handle_screw(?M4),
+  %tighten_front_carry_handle_screw(?M4).
+
+@!{AssembleButtstockRule}
+%assemble_buttstock(?M4) :-
+  %attach_buttstock(?M4).
+
+@!{AssembleBoltRule} 
+%assemble_bolt(?M4) :-
+  %insert_extractor(?M4),
+  %insert_extractor_pin(?M4),
+  %insert_bolt(?M4),
+  %insert_bolt_cam(?M4),
+  %insert_firing_pin(?M4),
+  %insert_firing_pin_retaining_pin(?M4).
+
+@!{AttachHandguardsRule}
+%attach_handguards(?M4) :-
+  %attach_upper_handguard(?M4),
+  %attach_lower_handguard(?M4),
+  %lift_slip_ring(?M4).
+
+@!{AssembleWeaponRule}
+%assemble_weapon(?M4) :-
+  %assemble_buffer(?M4),
+  %assemble_carry_handle(?M4),
+  %assemble_buttstock(?M4),
+  %assemble_bolt(?M4),
+  %attach_charging_handle(?M4),
+  %insert_bolt_carrier_group(?M4),
+  %close_upper(?M4),
+  %push_takedown_pin_head(?M4),
+  %attach_handguards(?M4),
+  %attach_sling_front(?M4),
+  %attach_sling_rear(?M4),
+  weapon_assembled(?M4).
+
+
+//--- Queries ---
+
+@!{RoundsAndCasings(?r,?c)} !- ?r : Round [ casing -> ?c ].
+
+all_have_casing([]).
+all_have_casing([?r|?rs]) :- ?r [casing -> ?], all_have_casing(?rs).
+
+@!{CheckRoundsInMag} !- 
+  myMag [ rounds -> [?r|?rs] ],
+  t_delete{myMag [ rounds -> [?r|?rs] ]},
+  t_delete{?r : Round},
+  t_delete{?r [ location -> ? ]},
+  t_delete{?r [ casing -> ? ]},
+  t_insert{myMag [ rounds -> ?rs ]},
+  ?rs = [?r1 | ?rest],
+  ?r1 [ casing -> ?].
+
+@!{CreateM4Test(?m41,?m42,?expin1,?expin2,?rounds2)} !- 
+  %create(M4,?m41), 
+  weapon_assembled(?m41), 
+  %create(M4,?m42), 
+  weapon_assembled(?m42),
+  ?m41.upper.boltCarrierGroup.bolt.extractorPin = ?expin1,
+  ?m42.upper.boltCarrierGroup.bolt.extractorPin = ?expin2,
+  ?m42.lower.magazine.rounds = ?rounds2.
+
+@!{Create_PushTakedownPinInAndOut} !- %create(M4,?m4), %push_takedown_pin_tail(?m4), %pull_takedown_pin(?m4), %push_takedown_pin_head(?m4).
+
+@!{Create_InsertMag} !- %create(M4,?m4), %insert_magazine(?m4).
+
+@!{Create_InsertMagAndPull} !- %create(M4,?m4), %insert_magazine(?m4), %pull_and_hold_charging_handle(?m4).
+
+@!{Create_InsertMagPullRelease} !- %create(M4,?m4), %insert_magazine(?m4), %pull_and_hold_charging_handle(?m4), %release_charging_handle(?m4).
+
+@!{Create_ChargeAndFire} !- 
+  %create(M4,?m4), 
+  %insert_magazine(?m4),
+  %pull_and_hold_charging_handle(?m4), 
+  %release_charging_handle(?m4), 
+  %pull_and_hold_trigger(?m4).
+
+@!{Create_ChargeAndFireTwice} !- 
+  %create(M4,?m4), 
+  ?mag = ?m4.lower.magazine,
+  %roundCount(?mag,30),
+  %insert_magazine(?m4),
+  %pull_and_hold_charging_handle(?m4), 
+  %release_charging_handle(?m4), 
+  %roundCount(?mag,29),
+  %pull_and_hold_trigger(?m4),
+  %roundCount(?mag,28),
+  %release_trigger(?m4),
+  %roundChambered(?m4.upper,?r), ?r [ casing -> ?c ],
+  %pull_and_hold_trigger(?m4),
+  %roundCount(?mag,27).
+
+@!{Create_ChargeUsingLockBackAndFire} !- 
+  %create(M4,?m4),
+  %pull_and_hold_charging_handle(?m4), 
+  %push_and_hold_bolt_catch_bottom(?m4), 
+  %release_charging_handle(?m4), 
+  %release_bolt_catch_bottom(?m4),
+  %push_charging_handle(?m4),
+  %insert_magazine(?m4), 
+  %push_bolt_catch_top(?m4),
+  %pull_and_hold_trigger(?m4).
+
+@!{Create_ChargeAndTryFireOnSafe} !- 
+  %create(M4,?m4),
+  %pull_and_hold_charging_handle(?m4), 
+  %push_and_hold_bolt_catch_bottom(?m4), 
+  %release_charging_handle(?m4), 
+  %release_bolt_catch_bottom(?m4),
+  %push_charging_handle(?m4),
+  %insert_magazine(?m4), 
+  %push_bolt_catch_top(?m4),
+  %select_safe(?m4),
+  \+ %pull_and_hold_trigger(?m4).
+
+@!{Create_ClearTheWeapon} !- %create(M4,?m4), %clear_weapon(?m4).
+
+@!{Create_Disassemble} !- %create(M4,?m4), %disassemble_weapon(?m4).
+
+@!{Create_DisassembleWithDetach} !- %create(M4,?m4), %disassemble_weapon_with_detach(?M4).
+
+@!{Create_DisassembleAndReassemble} !- %create(M4,?m4), %disassemble_weapon(?m4), %assemble_weapon(?m4).
+
+@!{TestAddDelLists(?del,?add)} !- %create(M4,?M4), %do(detach(?M4.sling,?M4.upper.slingSwivel),?del,?add).
+
+@!{PullChargingHandleChanges(?del,?add)} !- %create(M4,?M4), %do(pull_and_hold(ChargingHandle_1), ?del, ?add).
+
+brush1 : BoreBrush [].
+screw1 : Screw [].
+switch1 : Switch [].
+
+@!{CheckPossibleActionsBrush(?as)} !- possible_actions(brush1,?as).
+
+@!{CheckPossibleActionsScrew(?as)} !- possible_actions(screw1,?as).
+
+@!{CheckPossibleActionsSwitch(?as)} !- possible_actions(switch1,?as).
+
+@!{CheckActionArgs(?a, ?m, ?cls)} !- ?a :: Action [arg(1) -> ?m] [| ?m => ?cls |].
+
+@!{CheckPossibleActionsBrushCls(?as)} !- possible_actions_cls(Brush,?as). 
+
+@!{CheckPossibleActionsScrewCls(?as)} !- possible_actions_cls(Screw,?as). 
+
+@!{CheckPossibleActionsFooCls(?as)} !- possible_actions_cls(Foo,?as). 
+
+/* 
+possible_actions_cls(?c,?as) :-
+  ?as = collectset{?a | 
+    ?a :: Action [arg(1) -> ?m],
+    forall(?cls)^(?a [| ?m => ?cls |] ~~> ?c :: ?cls)}.
+*/
+
+@!{Ranges(?cls)} !- TightenScrew [arg(1) -> ?m] [| ?m => ?cls |].
+
+@!{ScrewSubclasses(?cls)} !- ?cls :: Screw.
+
+@!{AllPossibleActions(?class,?actions)} !- 
+  ?class :: PhysicalEntity, 
+  issymbol{?class}, 
+  possible_actions_cls(?class,?actions).  
+
+@!{MultipleBuffersTest(?buf)} !- %create(M4,?m4), ?m4 [hasPart -> ?buf : Buffer].
+
+@!{HasDirectComponentTest(?p)} !- %create(UpperHalf,?u), ?u [hasDirectComponent -> ?p].
+
+@!{HasComponentTest(?p)} !- %create(M4,?m4), ?m4 [hasComponent -> ?p].
+
+@!{HasComponentWithType(?c,?ts)} !- %create(M4,?m4), ?m4 [hasComponent -> ?c], direct_types(?c,?ts).
+

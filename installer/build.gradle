@@ -1,0 +1,90 @@
+/*
+ * Copyright 2016 SRI International
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Automate as much of the installer's work as possible.
+
+def backendDistTask = tasks.getByPath(':backend:distZip')
+def vwfDir = file("$rootDir/../vwf")
+def xsbDir = file("$rootDir/../xsb-src/XSB")
+def floraDir = file("$rootDir/../flora2")
+if (hasProperty('vwfDir')) {
+    vwfDir = file(property("vwfDir"))
+}
+if (hasProperty('xsb')) {
+    xsbDir = file(property("xsb")).parentFile.parentFile.parentFile.parentFile
+}
+if (hasProperty('floraDir')) {
+    floraDir = file(property("floraDir"))
+}
+
+task sourceDirs {
+    doFirst {
+        // Verify all the right directories exist.
+        if (!vwfDir.isDirectory()) {
+            throw new GradleException("$vwfDir must contain the VWF tree")
+        }
+        if (!xsbDir.isDirectory()) {
+            throw new GradleException("$xsbDir must contain XSB programs")
+        }
+        if (!floraDir.isDirectory()) {
+            throw new GradleException("$floraDir must contain the Flora tree")
+        }
+    }
+}
+
+task eseDist(type: GradleBuild) {
+    dir = file(tlRoot)
+    tasks = [":pal-ui:ese:distZip"]
+    ext.archivePath = "$tlRoot/pal-ui/ese/build/distributions/ese.zip"
+}
+
+task distZip(type: Zip, dependsOn: [sourceDirs, backendDistTask, eseDist]) {
+    baseName = 'installtree'
+    destinationDir = file('build')
+    duplicatesStrategy = 'exclude'
+    with rootProject.project(':backend').applicationDistribution
+    from(zipTree(eseDist.archivePath)) {
+        includeEmptyDirs = false
+        eachFile { FileCopyDetails fcd ->
+            def segs = fcd.relativePath.segments
+            segs = segs[1..-1] as String[]
+            fcd.relativePath = new RelativePath(!fcd.file.isDirectory(), segs)
+        }
+    }
+    from("$rootDir/repos") {
+        into 'repos'
+    }
+    from("$rootDir/LICENSE SAVE.txt")
+    from("$vwfDir") {
+        into 'VWF'
+    }
+    from(rootDir) {
+        into 'SAVE-src'
+        exclude 'repos/**'
+        exclude '**/build/**'
+        exclude '**/.*/**'
+    }
+    from(xsbDir) {
+        into 'XSB'
+    }
+    from(floraDir) {
+        into 'flora2'
+    }
+}
+
+task clean(type: Delete) {
+    delete 'build'
+}

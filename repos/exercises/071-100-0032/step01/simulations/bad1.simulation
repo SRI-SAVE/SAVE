@@ -1,0 +1,55 @@
+$demonstration {
+  'm4^0.1^CreateM4' "M4_1", 
+  ["UpperHalf_1",
+     "BoltCarrierGroup_1",
+     "Bolt_1",
+     "Extractor_1",
+     "ChargingHandle_1",
+     "CarryHandle_1",
+     "SlingLoop_1",
+     "LowerHalf_1",
+     "Magazine_1",
+     "ButtStock_1",
+     "Sling_1",
+     "ExtractorPin_1",
+     "BoltCam_1",
+     "FiringPinRetainingPin_1",
+     "FiringPin_1",
+     ["CarryHandleScrew_1","CarryHandleScrew_2"],
+     ["Round_1"],
+     ["Casing_1"],
+     "UpperHandGuard_1",
+     "LowerHandGuard_1",
+     "SlipRing_1",
+     "Selector_1",
+     "MagazineReleaseButton_1",
+     "Hammer_1",
+     "PivotPin_1",
+     "TakedownPin_1",
+     "BoltCatch_1",
+     "SlingSwivel_1",
+     "ButtStockLockLever_1",
+     "LowerReceiverExtension_1",
+     "Buffer_1",
+     "Trigger_1",
+     "BufferRetainer_1",
+     "Chamber_1",
+     "BoltCatchTop_1",
+     "BoltCatchBottom_1",
+     "TakedownPinTail_1",
+     "PivotPinTail_1"];      
+  'm4^0.1^Point' "M4_1", "ShootingBerm";
+  'm4^0.1^SelectSwitchPosition' "Selector_1", "Safe";
+  'm4^0.1^PullAndHold' "ChargingHandle_1";
+  'm4^0.1^PushAndHold' "BoltCatchBottom_1";
+  'm4^0.1^Release' "ChargingHandle_1";
+  'm4^0.1^Release' "BoltCatchBottom_1";
+  'm4^0.1^Push' "ChargingHandle_1";
+  'm4^0.1^SelectSwitchPosition' "Selector_1", "Safe";
+  'm4^0.1^Push' "BoltCatchTop_1";
+  'm4^0.1^SelectSwitchPosition' "Selector_1", "Semi";
+  'm4^0.1^Pull' "Trigger_1";
+  'm4^0.1^PullAndHold' "ChargingHandle_1";
+  'm4^0.1^Release' "ChargingHandle_1";
+  'm4^0.1^SelectSwitchPosition' "Selector_1", "Safe";
+ } properties:{}

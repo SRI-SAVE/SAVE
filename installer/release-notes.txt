@@ -1,0 +1,34 @@
+2/20/15	Upped the version to 1.2, so SAVE-1.3-installer
+		Updated the install instructions to use the installtree.zip only with
+		no need for a clone of SAVE or VWF git repos since the files were
+		duplicated.
+
+1/30/15	Changed name of installer to SAVE-1.1-installer
+
+1/28/15 Added .behave folder to VWF/public/CAT and VWF/public/published/clearing 
+		Added missing installer directory
+		Had to manually install VWF modules. Steps ot recreate:
+			1. Create the C:\Users\[your user]\Appdata\Roaming\npm directory.
+			2. In the VWF directory run npm install
+		Have to remove the 3rd party installers from the SAVE-src directory
+		because they are redundant.
+		
+1/26/15	Replaced installer creation program to Advanced Installer due to the
+		previous product crashing.
+		Still have to add
+			backend.properties
+			log_config.xml
+			node-server.cmd
+			save-1.1.url
+		by hand to the bin directory
+		
+		Remove the third party installers from the SAVE-src tree as this is not
+		needed and redundant.
+
+1/21/15	Changed default install path to root of C drive. C:\SRI\SAVE
+		Replaced 32 bit Java online installer with 64 bit local installer
+		Replaced 32 bit Nodejs installer with 64 bit version
+		Manually placed backend.properties and log_config.xml in bin directory
+		Manually placed XSB sub-tree in SAVE root tree.
+
+1/19/15	Initial build

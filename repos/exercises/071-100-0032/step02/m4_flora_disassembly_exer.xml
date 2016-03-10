@@ -1,0 +1,648 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2016 SRI International
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<exercise id="M4 Disassembly (Flora)">
+
+  <name>M4 Disassembly Task (Flora)</name>
+  <description>Disassemble an M4.</description>
+  <datafile>../../../s3d/weapons/M4/M4.s3d</datafile>
+  <datafile auto="true">../../../s3d/environments/range/ShootingRange.s3d</datafile>
+  <action_model>../../../knowledge/weapons/M4/m4.xml</action_model>
+  <html>The purpose of this exercise is to practice disassembling an M4.</html>
+
+  <problem>
+    <task id='task-1'>
+      <name>Exercise</name>
+      <html>Disassemble your weapon.</html>
+    </task>
+  </problem>
+
+  <solution>
+    <task_solution task='task-1'>
+      <option>
+        <step id='create-0'>
+          <atom functor='m4^0.1^CreateM4'>
+            <parameter id='created-0-m4' accessor='M4' />
+            <parameter id='created-0-components' accessor='components'>
+              <sub_param id="created-0-upperhalf" accessor="UpperHalf"/>
+              <sub_param id="created-0-boltcarriergroup" accessor="BoltCarrierGroup"/>
+              <sub_param id="created-0-bolt" accessor="Bolt"/>
+              <sub_param id="created-0-extractor" accessor="Extractor"/>
+              <sub_param id="created-0-charginghandle" accessor="ChargingHandle"/>
+              <sub_param id="created-0-carryhandle" accessor="CarryHandle"/>
+              <sub_param id="created-0-slingloop" accessor="SlingLoop"/>
+              <sub_param id="created-0-lowerhalf" accessor="LowerHalf"/>
+              <sub_param id="created-0-magazine" accessor="Magazine"/>
+              <sub_param id="created-0-buttstock" accessor="ButtStock"/>
+              <sub_param id="created-0-sling" accessor="Sling"/>
+              <sub_param id="created-0-extractorpin" accessor="ExtractorPin"/>
+              <sub_param id="created-0-boltcam" accessor="BoltCam"/>
+              <sub_param id="created-0-firingpinretainingpin" accessor="FiringPinRetainingPin"/>
+              <sub_param id="created-0-firingpin" accessor="FiringPin"/>
+              <sub_param id="created-0-carryhandlescrew" accessor="CarryHandleScrew">
+	              <sub_param id="created-0-carryhandlescrew1" accessor="first" />
+	              <sub_param id="created-0-carryhandlescrew2" accessor="last" />
+              </sub_param>
+              <sub_param id="created-0-round" accessor="Round"/>
+              <sub_param id="created-0-casing" accessor="Casing"/>
+              <sub_param id="created-0-upperhandguard" accessor="UpperHandGuard"/>
+              <sub_param id="created-0-lowerhandguard" accessor="LowerHandGuard"/>
+              <sub_param id="created-0-slipring" accessor="SlipRing"/>
+              <sub_param id="created-0-selector" accessor="Selector"/>
+              <sub_param id="created-0-magazinereleasebutton" accessor="MagazineReleaseButton"/>
+              <sub_param id="created-0-hammer" accessor="Hammer"/>
+              <sub_param id="created-0-pivotpin" accessor="PivotPin"/>
+              <sub_param id="created-0-takedownpin" accessor="TakedownPin"/>
+              <sub_param id="created-0-boltcatch" accessor="BoltCatch"/>
+              <sub_param id="created-0-slingswivel" accessor="SlingSwivel"/>
+              <sub_param id="created-0-buttstocklocklever" accessor="ButtStockLockLever"/>
+              <sub_param id="created-0-lowerreceiverextension" accessor="LowerReceiverExtension"/>
+              <sub_param id="created-0-buffer" accessor="Buffer"/>
+	          <sub_param id="created-0-trigger" accessor="Trigger"/>
+              <sub_param id="created-0-bufferretainer" accessor="BufferRetainer"/>
+              <sub_param id="created-0-chamber" accessor="Chamber"/>
+              <sub_param id="created-0-boltcatchtop" accessor="BoltCatchTop"/>
+              <sub_param id="created-0-boltcatchbottom" accessor="BoltCatchBottom"/>
+              <sub_param id="created-0-takedownpintail" accessor="TakedownPinTail"/>
+              <sub_param id="created-0-pivotpintail" accessor="PivotPinTail"/>
+            </parameter>	
+          </atom>
+        </step>
+        
+        <step id='detach-1'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d1-sling' accessor='thingDetached' />
+            <parameter id='d1-slingswivel' accessor='detachedFrom' />
+          </atom>
+        </step>
+
+        <step id='detach-2'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d2-sling' accessor='thingDetached' />
+            <parameter id='d2-slingloop' accessor='detachedFrom' />
+          </atom>
+        </step>
+
+        <step id='press-3'>
+          <atom functor='m4^0.1^Press'>
+            <parameter id='p3-slipring' accessor='thingPressed' />
+          </atom>
+        </step>
+
+        <step id='detach-4'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d4-upperhandguard' accessor='thingDetached' />
+            <parameter id='d4-upperhalf' accessor='detachedFrom' />
+          </atom>
+        </step>
+
+        <step id='detach-5'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d5-lowerhandguard' accessor='thingDetached' />
+            <parameter id='d5-upperhalf' accessor='detachedFrom' />
+          </atom>
+        </step>
+
+        <step id='push-6'>
+          <atom functor='m4^0.1^Push'>
+            <parameter id='p6-takedownpintail' accessor='thingPushed' />
+          </atom>
+        </step>
+
+        <step id='pull-7'>
+          <atom functor='m4^0.1^Pull'>
+            <parameter id='p7-takedownpin' accessor='thingPulled' />
+          </atom>
+        </step>
+
+        <step id='open-8'>
+          <atom functor='m4^0.1^Open'>
+            <parameter id='o8-m4' accessor='thingOpened' />
+          </atom>
+        </step>
+
+        <step id='push-9a'>
+          <atom functor='m4^0.1^Push'>
+            <parameter id='p9-pivotpintail' accessor='thingPushed' />
+          </atom>
+        </step>
+
+        <step id='pull-9b'>
+          <atom functor='m4^0.1^Pull'>
+            <parameter id='p9-pivotpin' accessor='thingPulled' />
+          </atom>
+        </step>
+
+        <step id='detach-10'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d10-upperhalf' accessor='thingDetached' />
+            <parameter id='d10-lowerhalf' accessor='detachedFrom' />
+          </atom>
+        </step>
+
+        <step id='loosen-11'>
+          <atom functor='m4^0.1^LoosenScrew'>
+            <parameter id='l11-screw' accessor='screwLoosened' />
+          </atom>
+        </step>
+
+        <step id='loosen-12'>
+          <atom functor='m4^0.1^LoosenScrew'>
+            <parameter id='l12-screw' accessor='screwLoosened' />
+          </atom>
+        </step>
+
+        <step id='detach-13'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d13-carryhandle' accessor='thingDetached' />
+            <parameter id='d13-upperhalf' accessor='detachedFrom' />
+          </atom>
+        </step>
+
+        <step id='pull-14'>
+          <atom functor='m4^0.1^Pull'>
+            <parameter id='p14-charginghandle' accessor='thingPulled' />
+          </atom>
+        </step>
+
+        <step id='extract-15'>
+          <atom functor='m4^0.1^Extract'>
+            <parameter id='e15-firingpinretainingpin' accessor='thingExtracted' />
+            <parameter id='e15-boltcarriergroup' accessor='extractedFrom' />
+          </atom>
+        </step>
+
+		<step id='extract-16'>
+          <atom functor='m4^0.1^Extract'>
+            <parameter id='e16-firingpin' accessor='thingExtracted' />
+            <parameter id='e16-boltcarriergroup' accessor='extractedFrom' />
+          </atom>
+        </step>        
+
+        <step id='extract-17'>
+          <atom functor='m4^0.1^Extract'>
+            <parameter id='e17-boltcam' accessor='thingExtracted' />
+            <parameter id='e17-boltcarriergroup' accessor='extractedFrom' />
+          </atom>
+        </step>
+
+		<step id='extract-18'>
+          <atom functor='m4^0.1^Extract'>
+            <parameter id='e18-bolt' accessor='thingExtracted' />
+            <parameter id='e18-boltcarriergroup' accessor='extractedFrom' />
+          </atom>
+        </step>        
+
+        <step id='inspect-19'>
+          <atom functor='m4^0.1^Inspect'>
+            <parameter id='i19-extractorpin' accessor='thingInspected' />
+          </atom>
+        </step>
+
+        <step id='extract-20'>
+          <atom functor='m4^0.1^Extract'>
+            <parameter id='e20-extractorpin' accessor='thingExtracted' />
+            <parameter id='e20-bolt' accessor='extractedFrom' />
+          </atom>
+        </step>        
+
+        <step id='extract-21'>
+          <atom functor='m4^0.1^Extract'>
+            <parameter id='e21-extractor' accessor='thingExtracted' />
+            <parameter id='e21-bolt' accessor='extractedFrom' />
+          </atom>
+        </step>        
+
+        <step id='push-and-hold-22'>
+          <atom functor='m4^0.1^PushAndHold'>
+            <parameter id='p22-buffer' accessor='thingPushed' />
+          </atom>
+        </step>        
+
+        <step id='push-and-hold-23'>
+          <atom functor='m4^0.1^PushAndHold'>
+            <parameter id='p23-bufferretainer' accessor='thingPushed' />
+          </atom>
+        </step>        
+
+        <step id='release-24'>
+          <atom functor='m4^0.1^Release'>
+            <parameter id='r24-buffer' accessor='thingReleased' />
+          </atom>
+        </step>        
+        
+        <step id='pull-25'>
+          <atom functor='m4^0.1^Pull'>
+            <parameter id='p25-buttstock' accessor='thingPulled' />
+          </atom>
+        </step>        
+
+        <step id='push-and-hold-26'>
+          <atom functor='m4^0.1^PushAndHold'>
+            <parameter id='p26-buttstocklocklever' accessor='thingPushed' />
+          </atom>
+        </step>        
+
+        <step id='detach-27'>
+          <atom functor='m4^0.1^Detach'>
+            <parameter id='d27-buttstock' accessor='thingDetached' />
+            <parameter id='d27-lowerhalf' accessor='detachedFrom' />
+          </atom>
+        </step>        
+
+        <equality_constraint>
+          <parameter>created-0-sling</parameter>
+          <parameter>d1-sling</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-slingswivel</parameter>
+          <parameter>d1-slingswivel</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-sling</parameter>
+          <parameter>d2-sling</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-slingloop</parameter>
+          <parameter>d2-slingloop</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-slipring</parameter>
+          <parameter>p3-slipring</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-upperhandguard</parameter>
+          <parameter>d4-upperhandguard</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-upperhalf</parameter>
+          <parameter>d4-upperhalf</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-lowerhandguard</parameter>
+          <parameter>d5-lowerhandguard</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-upperhalf</parameter>
+          <parameter>d5-upperhalf</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-takedownpintail</parameter>
+          <parameter>p6-takedownpintail</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-takedownpin</parameter>
+          <parameter>p7-takedownpin</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-m4</parameter>
+          <parameter>o8-m4</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-pivotpintail</parameter>
+          <parameter>p9-pivotpintail</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-pivotpin</parameter>
+          <parameter>p9-pivotpin</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-upperhalf</parameter>
+          <parameter>d10-upperhalf</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-lowerhalf</parameter>
+          <parameter>d10-lowerhalf</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-carryhandlescrew1</parameter>
+          <parameter>l11-screw</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-carryhandlescrew2</parameter>
+          <parameter>l12-screw</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-carryhandle</parameter>
+          <parameter>d13-carryhandle</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-upperhalf</parameter>
+          <parameter>d13-upperhalf</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-charginghandle</parameter>
+          <parameter>p14-charginghandle</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-firingpinretainingpin</parameter>
+          <parameter>e15-firingpinretainingpin</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-boltcarriergroup</parameter>
+          <parameter>e15-boltcarriergroup</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-firingpin</parameter>
+          <parameter>e16-firingpin</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-boltcarriergroup</parameter>
+          <parameter>e16-boltcarriergroup</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-boltcam</parameter>
+          <parameter>e17-boltcam</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-boltcarriergroup</parameter>
+          <parameter>e17-boltcarriergroup</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-bolt</parameter>
+          <parameter>e18-bolt</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-boltcarriergroup</parameter>
+          <parameter>e18-boltcarriergroup</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-extractorpin</parameter>
+          <parameter>i19-extractorpin</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-extractorpin</parameter>
+          <parameter>e20-extractorpin</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-bolt</parameter>
+          <parameter>e20-bolt</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-extractor</parameter>
+          <parameter>e21-extractor</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-bolt</parameter>
+          <parameter>e21-bolt</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-buffer</parameter>
+          <parameter>p22-buffer</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-bufferretainer</parameter>
+          <parameter>p23-bufferretainer</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-buffer</parameter>
+          <parameter>r24-buffer</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-buttstock</parameter>
+          <parameter>p25-buttstock</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-buttstocklocklever</parameter>
+          <parameter>p26-buttstocklocklever</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-buttstock</parameter>
+          <parameter>d27-buttstock</parameter>
+        </equality_constraint>
+
+        <equality_constraint>
+          <parameter>created-0-lowerhalf</parameter>
+          <parameter>d27-lowerhalf</parameter>
+        </equality_constraint>
+
+        <ordering_constraint
+            predecessor="create-0"
+        />
+
+        <ordering_constraint
+            predecessor="press-3"
+            successor="detach-4"
+        />
+
+        <ordering_constraint
+            predecessor="press-3"
+            successor="detach-5"
+        />
+
+        <ordering_constraint
+            predecessor="push-6"
+            successor="pull-7"
+        />
+
+        <ordering_constraint
+            predecessor="pull-7"
+            successor="open-8"
+        />
+
+        <ordering_constraint
+            predecessor="open-8"
+            successor="push-9a"
+        />
+
+        <ordering_constraint
+            predecessor="push-9a"
+            successor="pull-9b"
+        />
+
+        <ordering_constraint
+            predecessor="pull-9b"
+            successor="detach-10"
+        />
+
+        <ordering_constraint
+            predecessor="detach-10"
+            successor="loosen-11"
+        />
+
+        <ordering_constraint
+            predecessor="detach-10"
+            successor="loosen-11"
+        />
+
+        <ordering_constraint
+            predecessor="detach-10"
+            successor="loosen-12"
+        />
+
+        <ordering_constraint
+            predecessor="detach-10"
+            successor="extract-15"
+        />
+
+        <ordering_constraint
+            predecessor="detach-10"
+            successor="push-and-hold-22"
+        />
+
+        <ordering_constraint
+            predecessor="detach-10"
+            successor="pull-25"
+        />
+
+        <ordering_constraint
+            predecessor="loosen-11"
+            successor="detach-13"
+        />
+
+        <ordering_constraint
+            predecessor="loosen-12"
+            successor="detach-13"
+        />
+
+        <ordering_constraint
+            predecessor="open-8"
+            successor="pull-14"
+        />
+
+        <ordering_constraint
+            predecessor="pull-14"
+            successor="extract-15"
+        />
+
+        <ordering_constraint
+            predecessor="pull-14"
+            successor="extract-17"
+        />
+
+        <ordering_constraint
+            predecessor="extract-15"
+            successor="extract-16"
+        />
+
+        <ordering_constraint
+            predecessor="extract-17"
+            successor="extract-18"
+        />
+
+        <ordering_constraint
+            predecessor="extract-18"
+            successor="inspect-19"
+        />
+
+        <ordering_constraint
+            predecessor="inspect-19"
+            successor="extract-20"
+        />
+
+        <ordering_constraint
+            predecessor="push-and-hold-22"
+            successor="push-and-hold-23"
+        />
+
+        <ordering_constraint
+            predecessor="push-and-hold-23"
+            successor="release-24"
+        />
+
+        <ordering_constraint
+            predecessor="pull-25"
+            successor="push-and-hold-26"
+        />
+
+        <ordering_constraint
+            predecessor="push-and-hold-26"
+            successor="detach-27"
+        />
+
+        <ordering_constraint
+            predecessor="detach-1"
+            successor="press-3"
+        />
+
+        <ordering_constraint
+            predecessor="detach-2"
+            successor="press-3"
+        />
+
+        <ordering_constraint
+            predecessor="pull-9b"
+            successor="pull-14"
+        />
+
+        <ordering_constraint
+            predecessor="pull-14"
+            successor="pull-25"
+        />
+
+        <ordering_constraint
+            predecessor="extract-16"
+            successor="extract-17"
+        />
+
+        <ordering_constraint
+            predecessor="extract-20"
+            successor="extract-21"
+        />
+
+        <ordering_constraint
+            predecessor="push-and-hold-23"
+            successor="push-and-hold-26"
+        />
+
+      </option>
+    </task_solution>
+  </solution>
+
+  <success_html>You have successfully disassembled your weapon!</success_html>
+
+</exercise>

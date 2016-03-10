@@ -1,0 +1,270 @@
+//
+// Copyright 2016 SRI International
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+loaded(action).
+
+?- setsemantics{subclassing(nonstrict)}.
+
+?- \unless loaded(upper) \do add{upper}.
+
+// Call %do/3 on an action to perform it.
+// For this predicate, the 1st (input) argument is the action to perform, 
+// the 2nd (output) argument is the delete-list (facts that are no longer true),
+// the 3rd (output) argument is the add-list (new facts).
+// The output arguments are list of reified flora formulas.
+
+// The effects of executing an action using %do depend on the domain, 
+// and needs to be defined in rules elsewhere.
+
+// Convenience predicate to update the KB according to the delete- and add lists.
+%kb_update([?d|?ds],?as) :- t_delete{?d}, %kb_update(?ds,?as).
+%kb_update([],[?a|?as]) :- t_insert{?a}, %kb_update([],?as).
+%kb_update([],[]).
+
+// Convenience predicate that returns all the actions for which the given
+// object is allowed as the first argument.
+possible_actions(?obj,?as) :-
+  ?as = collectset{?a | 
+    ?a :: Action [arg(1) -> ?m], 
+    forall(?cls)^(?a [| ?m => ?cls |] ~~> ?obj : ?cls)}.
+
+// Convenience predicate that returns all the actions for which the given
+// class is allowed as the first argument.
+possible_actions_cls(?c,?as) :-
+  ?as = collectset{?a | 
+    ?a : ActionType [arg(1) -> ?m],
+    forall(?cls)^(?a [| ?m => ?cls |] ~~> ?c :: ?cls)}.
+
+possible_action_cls(?cls,?a) :-
+  ?a : ActionType [arg(1) -> ?m],
+  forall(?r)^(?a [| ?m => ?r |] ~~> ?cls :: ?r).
+
+possible_actions_cls(?cls, ?as) :-
+  ?as = collectset{?a | possible_action_cls(?cls,?a)}.
+
+ActionType [|
+  description {1..1} => \string,
+  name {1..1} => \string,
+  fancyName {1..1} => \string
+|].
+
+Action [||].
+
+ActionParameter [|
+  description {1..1} => \string
+|].
+
+
+// "Create" action. Ugly hack to support UI stuff.
+thingCreated : ActionParameter [ description -> "The thing created"^^\string ].
+
+Create :: Action : ActionType [
+  description -> "Create an object"^^\string,
+  fancyName ->  "Create ,#thingCreated"^^\string,
+  arg(1) -> thingCreated
+][|
+  thingCreated {1..1} => PhysicalEntity
+|].
+
+create(?_TC) : Create [ thingCreated -> ?_TC ].
+
+
+thingAttached : ActionParameter [ description -> "The thing being attached"^^\string ].
+attachedTo : ActionParameter [ description -> "The thing that an object is being attached to"^^\string ].
+
+Attach :: Action : ActionType [ 
+  description -> "Attach an object to another object"^^\string,
+  fancyName ->  "Attach ,#thingAttached, to ,#attachedTo"^^\string,
+  arg(1) -> thingAttached,
+  arg(2) -> attachedTo
+][|
+  thingAttached {1..1} => PhysicalEntity,
+  attachedTo {1..1} => PhysicalEntity
+|].
+
+attach(?_TA, ?_AT) : Attach [ thingAttached -> ?_TA, attachedTo -> ?_AT ].
+
+
+thingDetached : ActionParameter [ description -> "The thing being detached"^^\string ].
+detachedFrom : ActionParameter [ description -> "The thing that an object is being detached from"^^\string ].
+
+Detach :: Action : ActionType [ 
+  description -> "Detach an object from another object"^^\string,
+  fancyName -> "Detach ,#thingDetached, from ,#detachedFrom"^^\string,
+  arg(1) -> thingDetached,
+  arg(2) -> detachedFrom
+][|
+  thingDetached {1..1} => PhysicalEntity,
+  detachedFrom {1..1} => PhysicalEntity
+|].
+
+detach(?_TD, ?_DF) : Detach [ thingDetached -> ?_TD, detachedFrom -> ?_DF ].
+
+
+thingPushed : ActionParameter [ description -> "The object being pushed"^^\string ].
+
+Push :: Action : ActionType [ 
+  description -> "Push an object"^^\string,
+  fancyName -> "Push ,#thingPushed"^^\string,
+  arg(1) -> thingPushed
+][|
+  thingPushed {1..1} => PhysicalEntity
+|].
+
+push(?_TP) : Push [ thingPushed -> ?_TP ].
+
+
+thingPulled : ActionParameter [ description -> "The object being pulled"^^\string ].
+
+Pull :: Action : ActionType [ 
+  description -> "Pull an object"^^\string,
+  fancyName -> "Pull ,#thingPulled,"^^\string,
+  arg(1) -> thingPulled
+][|
+  thingPulled {1..1} => PhysicalEntity
+|].
+
+pull(?_TP) : Pull [ thingPulled -> ?_TP ].
+
+
+thingReleased : ActionParameter [ description -> "The object being released"^^\string ].
+
+Release :: Action : ActionType [ 
+  description -> "Release an object that is being held"^^\string,
+  fancyName -> "Release ,#thingReleased"^^\string,
+  arg(1) -> thingReleased
+][|
+  thingReleased {1..1} => PhysicalEntity
+|].
+
+release(?_TR) : Release [ thingReleased -> ?_TR ].
+
+
+thingInserted : ActionParameter [ description -> "The object being inserted"^^\string ].
+
+insertedInto : ActionParameter [ description -> "Where the object is being inserted"^^\string ].
+
+Insert :: Action : ActionType [ 
+  description -> "Insert an object into another object"^^\string,
+  fancyName -> "Insert ,#thingInserted, into another ,#insertedInto,"^^\string,
+  arg(1) -> thingInserted,
+  arg(2) -> insertedInto
+][|
+  thingInserted {1..1} => PhysicalEntity,
+  insertedInto {1..1} => PhysicalEntity
+|].
+
+insert(?_TI,?_II) : Insert [ thingInserted -> ?_TI, insertedInto -> ?_II ].
+
+
+thingExtracted : ActionParameter [ description -> "The object being extracted"^^\string ].
+
+extractedFrom : ActionParameter [ description -> "Where the object is being extracted from"^^\string ].
+
+Extract :: Action : ActionType [ 
+  description -> "Extract an object from another object"^^\string,
+  fancyName -> "Extract ,#thingExtracted, from ,#extractedFrom"^^\string,
+  arg(1) -> thingExtracted,
+  arg(2) -> extractedFrom
+][|
+  thingExtracted {1..1} => PhysicalEntity,
+  extractedFrom {1..1} => PhysicalEntity
+|].
+
+extract(?_TE,?_EF) : Extract [ thingExtracted -> ?_TE, extractedFrom -> ?_EF ].
+
+
+thingPressed : ActionParameter [ description -> "The object being pressed"^^\string ].
+
+Press :: Action : ActionType [ 
+  description -> "Press an object"^^\string,
+  fancyName -> "Press ,#thingPressed"^^\string,
+  arg(1) -> thingPressed
+][|
+  thingPressed {1..1} => PhysicalEntity
+|].
+
+press(?_TP) : Press [ thingPressed -> ?_TP ].
+
+
+thingLifted : ActionParameter [ description -> "The object being lifted"^^\string ].
+
+Lift :: Action : ActionType [ 
+  description -> "Lift an object"^^\string,
+  fancyName -> "Lift ,#thingLifted"^^\string,
+  arg(1) -> thingLifted
+][|
+  thingLifted {1..1} => PhysicalEntity
+|].
+
+lift(?_TL) : Lift [ thingLifted -> ?_TL ].
+
+
+thingOpened : ActionParameter [ description -> "The object being opened"^^\string ].
+
+Open :: Action : ActionType [ 
+  description -> "Open an object"^^\string,
+  fancyName -> "Open ,#thingOpened"^^\string,
+  arg(1) -> thingOpened
+][|
+  thingOpened {1..1} => PhysicalEntity
+|].
+
+open(?_TO) : Open [ thingOpened -> ?_TO ].
+
+
+thingClosed : ActionParameter [ description -> "The object being closed"^^\string ].
+
+Close :: Action : ActionType [ 
+  description -> "Close an object"^^\string,
+  fancyName -> "Close ,#thingClosed"^^\string,
+  arg(1) -> thingClosed
+][|
+  thingClosed {1..1} => PhysicalEntity
+|].
+
+close(?_TC) : Close [ thingClosed -> ?_TC ].
+ 
+
+thingInspected : ActionParameter [ description -> "The thing inspected"^^\string ].
+
+Inspect :: Action : ActionType [ 
+  description -> "Inspect something"^^\string,
+  fancyName -> "Inspect ,#thingInspected"^^\string,
+  arg(1) -> thingInspected
+][|
+  thingInspected {1..1} => PhysicalEntity
+|].
+
+inspect(?_TI) : Inspect [ thingInspected -> ?_TI ].
+
+
+thingPointed : ActionParameter [ description -> "The thing pointed"^^\string ].
+
+pointedAt : ActionParameter [ description -> "The thing pointed at"^^\string ].
+
+Point :: Action : ActionType [ 
+  description -> "Point an object at another object"^^\string,
+  fancyName -> "Point ,#thingPointed, at ,#pointedAt"^^\string,
+  arg(1) -> thingPointed,
+  arg(2) -> pointedAt
+][|
+  thingPointed {1..1} => PhysicalEntity,
+  pointedAt {1..1} => PhysicalEntity
+|].
+
+point(?_TP,?_PA) : Point [ thingPointed -> ?_TP, pointedAt -> ?_PA ].
+

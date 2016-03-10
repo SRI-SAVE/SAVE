@@ -1,0 +1,90 @@
+apply plugin: 'SRIJava'
+apply plugin: 'application'
+
+mainClassName = 'com.sri.save.backend.Backend'
+if (hasProperty("SAVEargs")) {
+    run.args(SAVEargs.split())
+}
+
+/*
+ * Copyright 2016 SRI International
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// We need to pass some special properties to the run and test targets.
+def setProps = {
+    def propsFile = file("backend.properties")
+    if (!propsFile.exists()) {
+        throw new GradleException("$propsFile must exist; copy it from ${propsFile}.default and edit")
+    }
+    def DEFTport = rootProject.properties["DEFTport"]
+    if (DEFTport != null) {
+        systemProperties["PAL.JmsMessageBrokerPort"] = DEFTport
+    }
+
+    def httpPort = rootProject.properties["SAVE.HTTPport"]
+    if (httpPort != null) {
+        systemProperties["SAVE.HTTPport"] = httpPort
+    }
+}
+run.doFirst setProps
+test.doFirst setProps
+
+task xjc {
+    doLast {
+        // Delete the old generated java files.
+        def files = fileTree("src/main/java") {
+            include "com/sri/save/s3d/*.java"
+        }
+        delete(files)
+
+        // Regenerate them from the XSD.
+        exec {
+            executable "xjc"
+            setArgs(["-d", "src/main/java", "-p", "com.sri.save.s3d",
+                     "src/main/resources/com/sri/save/s3d/s3d.xsd"])
+        }
+    }
+}
+
+// We temporarily depend on JavaFX. Add the appropriate directory to
+// Gradle's list of repositories, if JavaFX isn't already on our
+// classpath.
+try {
+    Class.forName("javafx.stage.Stage")
+} catch(Exception e) {
+    def javaHome = System.properties['java.home']
+    repositories {
+        flatDir name: 'javafx', dirs: ["$javaHome/jre/lib",
+                                       "$javaHome/lib",
+                                       "$javaHome/../lib"]
+    }
+    dependencies {
+        compile 'com.sun:jfxrt:'
+    }
+}
+
+dependencies {
+    compile 'com.sri:pal-bridge:latest.integration'
+    compile 'com.sri:aa:latest.integration'
+    compile 'com.sri:floralib:latest.integration'
+    compile 'org.eclipse.jetty:jetty-server:9.1.2+'
+    compile 'org.eclipse.jetty:jetty-servlet:9.1.2+'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'org.slf4j:slf4j-api:1.6.4'
+    // compile 'ch.qos.logback:logback-classic:1.0.13'
+    compile 'org.apache.velocity:velocity:1.7'
+    compile 'com.sri:pal-ui-core:latest.integration'
+    runtime 'org.slf4j:slf4j-log4j12:1.6.4'
+}
